@@ -14,17 +14,18 @@ class Dashboard extends Component {
     this.state = {
       data : {
         "TR" : {
-          "Key":"AD",
-          "CountryCode":"AD",
-          "CountryName":"Andorra",
+          "Key":"TR",
+          "CountryCode":"TR",
+          "CountryName":"Turkey",
           "RegionCode":null,
           "RegionName":null,
-          "Latitude":"42.546245",
-          "Longitude":"1.601554",
-          "Population":77142,
+          "Latitude":"38.963745",
+          "Longitude":"35.243322",
+          "Population":83429615,
           "cases" : [
             {
-              "Date":"2020-01-14",
+              "Date":"YYYY-MM-DD",
+              "Key": "TR",
               "Confirmed":0.0,
               "Deaths":0.0,
               "NewCases":0.0,
@@ -39,13 +40,14 @@ class Dashboard extends Component {
           ],
           "mobilityData" : [
             {
-              "Date":"2020-02-15",
+              "Date":"YYYY-MM-DD",
+              "Key": "TR",
               "RetailAndRecreation":0.0,
-              "GroceryAndPharmacy":4.0,
-              "Parks":5.0,
+              "GroceryAndPharmacy":0.0,
+              "Parks":0.0,
               "TransitStations":0.0,
-              "Workplaces":2.0,
-              "Residential":1.0
+              "Workplaces":0.0,
+              "Residential":0.0
             }
           ],
         }
@@ -82,7 +84,6 @@ class Dashboard extends Component {
           data.forEach(country => self.setCovidMetaData(country));
           self.getCases();
           self.getMobilityData();
-          debugger;
       })
       .catch(function (error) {
         // handle error
@@ -96,7 +97,6 @@ class Dashboard extends Component {
 
   getCases() {
     let self = this;
-    debugger;
     axios.get('https://open-covid-19.github.io/data/data_minimal.json')
       .then(function ({ data }) {
         let data_minimal = data;
@@ -129,7 +129,6 @@ class Dashboard extends Component {
 
   getMobilityData() {
     let self = this;
-    debugger;
     axios.get('https://open-covid-19.github.io/data/mobility.json')
       .then(function ({ data }) {
         Object.keys(self.state.data).forEach(function(key) {
