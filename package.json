@@ -9,7 +9,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git@github.com:coreui/coreui-free-react-admin-template.git"
+    "url": "https://github.com/sahinkat/covid-19"
   },
   "dependencies": {
     "@coreui/coreui": "^2.1.1",
