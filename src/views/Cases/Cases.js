@@ -22,64 +22,62 @@ import { getStyle } from '@coreui/coreui/dist/js/coreui-utilities';
 import {
   ma, ema, wma
 } from 'moving-averages'
-import data_test from '../../data/data_test';
 
 var _ = require('lodash');
 var moment = require('moment');
 const axios = require('axios');
-const getCountryISO3 = require("country-iso-2-to-3");
 
 const colorSet = ["primary", "warning", "success", "danger", "info"];
 const colorCode = [getStyle('--primary'), getStyle('--warning'), getStyle('--success'), getStyle('--danger'), getStyle('--info')];
-const mainChartOpts = {
-  tooltips: {
-    enabled: false,
-    custom: CustomTooltips,
-    intersect: true,
-    mode: 'index',
-    position: 'nearest',
-    callbacks: {
-      labelColor: function(tooltipItem, chart) {
-        return { backgroundColor: chart.data.datasets[tooltipItem.datasetIndex].borderColor }
-      }
-    }
-  },
-  maintainAspectRatio: false,
-  legend: {
-    display: false,
-  },
-  scales: {
-    xAxes: [
-      {
-        gridLines: {
-          drawOnChartArea: false,
-        },
-      }],
-    yAxes: [
-      {
-        ticks: {
-          beginAtZero: true,
-          maxTicksLimit: 50,
-          stepSize: 0.001,
-          max: 0.5,
-        },
-      }],
-  },
-  elements: {
-    point: {
-      radius: 0,
-      hitRadius: 10,
-      hoverRadius: 4,
-      hoverBorderWidth: 3,
-    },
-  },
-};
 
-class Dashboard extends Component {
+class Cases extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      mainChartOpts : {
+        tooltips: {
+          enabled: false,
+          custom: CustomTooltips,
+          intersect: true,
+          mode: 'index',
+          position: 'nearest',
+          callbacks: {
+            labelColor: function(tooltipItem, chart) {
+              return { backgroundColor: chart.data.datasets[tooltipItem.datasetIndex].borderColor }
+            }
+          }
+        },
+        maintainAspectRatio: false,
+        legend: {
+          display: false,
+        },
+        scales: {
+          xAxes: [
+            {
+              gridLines: {
+                drawOnChartArea: false,
+              },
+            }],
+          yAxes: [
+            {
+              ticks: {
+                beginAtZero: true,
+                maxTicksLimit: 40,
+                stepSize: 1000,
+                max: 130000,
+              },
+            }],
+        },
+        elements: {
+          point: {
+            radius: 0,
+            hitRadius: 10,
+            hoverRadius: 4,
+            hoverBorderWidth: 3,
+          },
+        },
+      },
       allDataObject : {
         "TR" : {
           "Key":"TR",
@@ -178,7 +176,6 @@ class Dashboard extends Component {
 
   getCases() {
     let self = this;
-    let testDataAll = data_test();
     axios.get('https://open-covid-19.github.io/data/data_minimal.json')
       .then(function ({ data }) {
         let data_minimal = data;
@@ -196,19 +193,6 @@ class Dashboard extends Component {
                                 }).value();
             let allDataObject = self.state.allDataObject;
             Object.keys(allDataObject).forEach(function(key) {
-              let countryTestData = _.filter(testDataAll, {"Code":getCountryISO3(key)});
-              if(concattedCaseData[key] !== undefined && countryTestData !== undefined && countryTestData.length > 0){
-                concattedCaseData[key].forEach(function(caseData) {
-                  if(caseData !== undefined){
-                    let countryTestDataAtDate = _.find(countryTestData, function(e) {
-                      return moment(caseData["Date"], 'YYYY-MM-DD').isSame(moment(e["Date"], 'll'), 'day');
-                    });
-                    if(countryTestDataAtDate !== undefined && countryTestDataAtDate.Tests > 0){
-                      caseData["Tests"] = countryTestDataAtDate.Tests;
-                    }
-                  }
-                });
-              }
               allDataObject[key].cases = concattedCaseData[key];
             });
 
@@ -286,10 +270,7 @@ class Dashboard extends Component {
       let countryData = allDataObject[country];
       graphData.push(countryData);
       if(countryData.cases !== undefined && countryData.cases.length > 0) {
-        let testsAvailableDates = _.filter(countryData.cases, function(e) {
-          return e["Tests"] > 0;
-        });
-        if(testsAvailableDates !== undefined && testsAvailableDates.length > 0 && strMinDate > testsAvailableDates[0].Date) {
+        if(strMinDate > countryData.cases[0].Date) {
           strMinDate = countryData.cases[0].Date;
         }
       }
@@ -303,23 +284,17 @@ class Dashboard extends Component {
     }
 
     let index = 0;
+    let maxValue = 0;
     graphData.forEach(function (data) {
       let countryConfirmedData = [];
       let previousNumber = 0;
-      let previousTestNumber = 1;
       mainChart.labels.forEach(function (date) {
         let countryDataAtDate = _.find(data.cases, ['Date', moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD')]);
         if(countryDataAtDate !== undefined){
-          let countryDataTestsAtDate = countryDataAtDate.Tests;
-          if(countryDataTestsAtDate !== undefined && countryDataTestsAtDate !== 0){
-            countryConfirmedData.push(countryDataAtDate.Confirmed/countryDataTestsAtDate);
-            previousTestNumber = countryDataAtDate.Tests;
-          } else {
-            countryConfirmedData.push(0);
-          }
+          countryConfirmedData.push(countryDataAtDate.Confirmed);
           previousNumber = countryDataAtDate.Confirmed;
         } else {
-          countryConfirmedData.push(previousTestNumber > 1 ? previousNumber/previousTestNumber : 0);
+          countryConfirmedData.push(previousNumber);
         }
       });
       if(self.state.radioSelected === 1){
@@ -329,7 +304,6 @@ class Dashboard extends Component {
       } else if(self.state.radioSelected === 3){
         countryConfirmedData = wma(countryConfirmedData, 3);
       }
-      console.log(countryConfirmedData);
 
       mainChart.datasets.push({
         label: data.CountryName,
@@ -340,10 +314,21 @@ class Dashboard extends Component {
         data: countryConfirmedData,
       });
       index++;
+      let tempMaxValue = _.max(countryConfirmedData);
+      if(maxValue < tempMaxValue){
+        maxValue = tempMaxValue;
+      }
     });
-
+    let mainChartOpts = this.state.mainChartOpts;
+    mainChartOpts.scales.yAxes.ticks = {
+      beginAtZero: true,
+      maxTicksLimit: 50,
+      stepSize: Math.ceil(maxValue*1.1/50),
+      max: Math.ceil(maxValue*1.1),
+    };
     this.setState({
       mainChart : mainChart,
+      mainChartOpts : mainChartOpts,
     });
 
   }
@@ -392,17 +377,17 @@ class Dashboard extends Component {
                   <Col sm="7" className="d-none d-sm-inline-block">
                     <ButtonToolbar className="float-right" aria-label="Toolbar with button groups">
                       <ButtonGroup className="mr-3" aria-label="First group">
-                        <Button className="text-light" color="outline-primary" onClick={() => this.onRadioBtnClick(0)} active={this.state.radioSelected !== 0}>Normal</Button>
-                        <Button className="text-light" color="outline-primary" onClick={() => this.onRadioBtnClick(1)} active={this.state.radioSelected !== 1}>MA</Button>
-                        <Button className="text-light" color="outline-primary" onClick={() => this.onRadioBtnClick(2)} active={this.state.radioSelected !== 2}>EMA</Button>
-                        <Button className="text-light" color="outline-primary" onClick={() => this.onRadioBtnClick(3)} active={this.state.radioSelected !== 3}>WMA</Button>
+                        <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(0)} active={this.state.radioSelected !== 0}>Normal</Button>
+                        <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(1)} active={this.state.radioSelected !== 1}>MA</Button>
+                        <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(2)} active={this.state.radioSelected !== 2}>EMA</Button>
+                        <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(3)} active={this.state.radioSelected !== 3}>WMA</Button>
                       </ButtonGroup>
                     </ButtonToolbar>
                   </Col>
                 </Row>
-                <div className="chart-wrapper" style={{ height: 300 + 'px', marginTop: 20 + 'px' }}>
+                <div className="chart-wrapper" style={{ height: 400 + 'px', marginTop: 20 + 'px' }}>
                    {
-                     <Line data={this.state.mainChart} options={mainChartOpts} height={300} />
+                     <Line data={this.state.mainChart} options={this.state.mainChartOpts} height={400} />
                    }
                 </div>
               </CardBody>
@@ -443,4 +428,4 @@ class Dashboard extends Component {
   }
 }
 
-export default Dashboard;
+export default Cases;
