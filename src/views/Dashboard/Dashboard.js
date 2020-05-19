@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Line } from 'react-chartjs-2';
+import { Bar, Doughnut, Line, Pie, Polar, Radar } from 'react-chartjs-2';
 import {
   Alert,
   Button,
@@ -7,6 +7,7 @@ import {
   ButtonToolbar,
   Card,
   CardBody,
+  CardColumns,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -17,428 +18,101 @@ import {
   Progress,
   Row
 } from 'reactstrap';
+
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 import { getStyle } from '@coreui/coreui/dist/js/coreui-utilities';
-import {
-  ma, ema, wma
-} from 'moving-averages'
-import data_test from '../../data/data_test';
 
-var _ = require('lodash');
-var moment = require('moment');
+import { ThemeContextConsumer } from "../../ThemeContextProvider";
+
+const moment = require('moment');
+const _ = require('lodash');
 const axios = require('axios');
-const getCountryISO3 = require("country-iso-2-to-3");
 
-const colorSet = ["primary", "warning", "success", "danger", "info"];
-const colorCode = [getStyle('--primary'), getStyle('--warning'), getStyle('--success'), getStyle('--danger'), getStyle('--info')];
-const mainChartOpts = {
+const colorSet = ['255,0,0', '0,255,0', '0,0,255', '255,255,0', '0,255,255', '255,0,255'];
+const options = {
   tooltips: {
     enabled: false,
-    custom: CustomTooltips,
-    intersect: true,
-    mode: 'index',
-    position: 'nearest',
-    callbacks: {
-      labelColor: function(tooltipItem, chart) {
-        return { backgroundColor: chart.data.datasets[tooltipItem.datasetIndex].borderColor }
-      }
-    }
+    custom: CustomTooltips
   },
-  maintainAspectRatio: false,
-  legend: {
-    display: false,
-  },
-  scales: {
-    xAxes: [
-      {
-        gridLines: {
-          drawOnChartArea: false,
-        },
-      }],
-    yAxes: [
-      {
-        ticks: {
-          beginAtZero: true,
-          maxTicksLimit: 50,
-          stepSize: 0.001,
-          max: 0.5,
-        },
-      }],
-  },
-  elements: {
-    point: {
-      radius: 0,
-      hitRadius: 10,
-      hoverRadius: 4,
-      hoverBorderWidth: 3,
-    },
-  },
-};
+  maintainAspectRatio: false
+}
 
 class Dashboard extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      allDataObject : {
-        "TR" : {
-          "Key":"TR",
-          "CountryCode":"TR",
-          "CountryName":"Turkey",
-          "RegionCode":null,
-          "RegionName":null,
-          "Latitude":"38.963745",
-          "Longitude":"35.243322",
-          "Population":83429615,
-          "cases" : [
-            {
-              "Date":"YYYY-MM-DD",
-              "Key": "TR",
-              "Confirmed":0.0,
-              "Deaths":0.0,
-              "NewCases":0.0,
-              "NewDeaths":0.0,
-              "NewMild":0.0,
-              "NewSevere":0.0,
-              "NewCritical":0.0,
-              "CurrentlyMild":0.0,
-              "CurrentlySevere":0.0,
-              "CurrentlyCritical":0.0
-            }
-          ],
-          "mobilityData" : [
-            {
-              "Date":"YYYY-MM-DD",
-              "Key": "TR",
-              "RetailAndRecreation":0.0,
-              "GroceryAndPharmacy":0.0,
-              "Parks":0.0,
-              "TransitStations":0.0,
-              "Workplaces":0.0,
-              "Residential":0.0
-            }
-          ],
-        }
-      },
-      countries : [
-        {
-          "Key":"TR",
-          "CountryCode":"TR",
-          "CountryName":"Turkey",
-        }
-      ],
-      inputs : {
-        selectedCountry   : "",
-        selectedCountries : [],
-      },
-      mainChart : {
-        labels: [],
+      radar : {
+        labels: ['Cases Per 100.000', 'Deaths Per One Million', 'Tests Per 10.000', 'Active Per 100.000', 'Recovered Per 100.000', 'Critical Per Ten Million'],
         datasets: [],
-      },
-      radioSelected : 0,
+      }
     };
   }
 
   loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
 
   componentDidMount() {
-    this.getCovidMetaData();
-  }
-
-  getCovidMetaData() {
     let self = this;
-    axios.get('https://open-covid-19.github.io/data/metadata.json')
+    let radar = this.state.radar;
+    axios.get('https://corona.lmao.ninja/v2/continents?yesterday=true')
       .then(function ({ data }) {
-          let allDataObject = {};
-          let countries = [];
-          data.forEach(country => {
-            allDataObject[country["Key"]] = country;
-            if(country["Key"].length < 3) {
-              countries.push({
-                "Key":country["Key"],
-                "CountryCode":country["CountryCode"],
-                "CountryName":country["CountryName"]
-              });
+        let i = 0;
+        data.forEach(function (continent) {
+          radar.datasets.push(
+            {
+              label: continent.continent,
+              backgroundColor: 'rgba(' + colorSet[i] + ',0.2)',
+              borderColor: 'rgba(' + colorSet[i] + ',1)',
+              pointBackgroundColor: 'rgba(' + colorSet[i] + ',1)',
+              pointBorderColor: '#fff',
+              pointHoverBackgroundColor: '#fff',
+              pointHoverBorderColor: 'rgba(' + colorSet[i] + ',1)',
+              data: [continent.casesPerOneMillion/10, continent.deathsPerOneMillion, continent.testsPerOneMillion/100, continent.activePerOneMillion/10, continent.recoveredPerOneMillion/10, continent.criticalPerOneMillion*10],
             }
-          });
-
-          self.setState({
-            allDataObject : allDataObject,
-            countries     : countries
-          });
-
-          self.getCases();
-          //self.getMobilityData();
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error);
-      });
-  }
-
-  getCases() {
-    let self = this;
-    let testDataAll = data_test();
-    axios.get('https://open-covid-19.github.io/data/data_minimal.json')
-      .then(function ({ data }) {
-        let data_minimal = data;
-        axios.get('https://open-covid-19.github.io/data/data_categories.json')
-          .then(function ({ data }) {
-            let data_categories = data;
-            let concattedCaseData = _(data_minimal)
-                                .concat(data_categories)
-                                .groupBy("Key")
-                                .mapValues(function(values) {
-                                  return _(values)
-                                        .groupBy("Date")
-                                        .map(objs => _.assignWith({}, ...objs, (val1, val2) => val1 || val2))
-                                        .value();
-                                }).value();
-            let allDataObject = self.state.allDataObject;
-            Object.keys(allDataObject).forEach(function(key) {
-              let countryTestData = _.filter(testDataAll, {"Code":getCountryISO3(key)});
-              if(concattedCaseData[key] !== undefined && countryTestData !== undefined && countryTestData.length > 0){
-                concattedCaseData[key].forEach(function(caseData) {
-                  if(caseData !== undefined){
-                    let countryTestDataAtDate = _.find(countryTestData, function(e) {
-                      return moment(caseData["Date"], 'YYYY-MM-DD').isSame(moment(e["Date"], 'll'), 'day');
-                    });
-                    if(countryTestDataAtDate !== undefined && countryTestDataAtDate.Tests > 0){
-                      caseData["Tests"] = countryTestDataAtDate.Tests;
-                    }
-                  }
-                });
-              }
-              allDataObject[key].cases = concattedCaseData[key];
-            });
-
-            self.setState({
-              allDataObject : allDataObject,
-            });
-          })
-          .catch(function (error) {
-            // handle error
-            console.log(error);
-          });
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error);
-      });
-  }
-
-  getMobilityData() {
-    let self = this;
-    axios.get('https://open-covid-19.github.io/data/mobility.json')
-      .then(function ({ data }) {
-        let allDataObject = self.state.allDataObject;
-        Object.keys(allDataObject).forEach(function(key) {
-          allDataObject[key].mobilityData = _.filter(data, {"Key":key});
+          );
+          i++;
         });
-
         self.setState({
-          allDataObject : allDataObject,
+          radar : radar,
         });
       })
       .catch(function (error) {
         // handle error
         console.log(error);
       });
-  }
-
-  onCountryChange(selectedCountry) {
-    if(selectedCountry.target.value !== ''){
-      let inputs = this.state.inputs;
-      inputs.selectedCountries.push(selectedCountry.target.value);
-      this.setState({
-        inputs : inputs,
-      });
-    }
-
-    this.drawCovidGraph();
-  }
-
-  onDismiss(removedCountry, e) {
-    if(removedCountry !== ''){
-      let inputs = this.state.inputs;
-      _.remove(inputs.selectedCountries, function (country) {
-        return country === removedCountry;
-      });
-      this.setState({
-        inputs : inputs,
-      });
-    }
-
-    this.drawCovidGraph();
-  }
-
-  drawCovidGraph(){
-    let self = this;
-    let allDataObject = this.state.allDataObject;
-    let selectedCountries = this.state.inputs.selectedCountries;
-    let mainChart = this.state.mainChart;
-
-    let graphData = [];
-    mainChart.labels = [];
-    mainChart.datasets = [];
-    let strMinDate = "9999-99-99";
-    selectedCountries.forEach(function (country) {
-      let countryData = allDataObject[country];
-      graphData.push(countryData);
-      if(countryData.cases !== undefined && countryData.cases.length > 0) {
-        let testsAvailableDates = _.filter(countryData.cases, function(e) {
-          return e["Tests"] > 0;
-        });
-        if(testsAvailableDates !== undefined && testsAvailableDates.length > 0 && strMinDate > testsAvailableDates[0].Date) {
-          strMinDate = countryData.cases[0].Date;
-        }
-      }
-    });
-    let minDate = new Date(strMinDate);
-    let today = new Date();
-
-    while(minDate < today) {
-      mainChart.labels.push(moment(minDate).format('DD/MM/YYYY'));
-      minDate.setDate(minDate.getDate() + 1);
-    }
-
-    let index = 0;
-    graphData.forEach(function (data) {
-      let countryConfirmedData = [];
-      let previousNumber = 0;
-      let previousTestNumber = 1;
-      mainChart.labels.forEach(function (date) {
-        let countryDataAtDate = _.find(data.cases, ['Date', moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD')]);
-        if(countryDataAtDate !== undefined){
-          let countryDataTestsAtDate = countryDataAtDate.Tests;
-          if(countryDataTestsAtDate !== undefined && countryDataTestsAtDate !== 0){
-            countryConfirmedData.push(countryDataAtDate.Confirmed/countryDataTestsAtDate);
-            previousTestNumber = countryDataAtDate.Tests;
-          } else {
-            countryConfirmedData.push(0);
-          }
-          previousNumber = countryDataAtDate.Confirmed;
-        } else {
-          countryConfirmedData.push(previousTestNumber > 1 ? previousNumber/previousTestNumber : 0);
-        }
-      });
-      if(self.state.radioSelected === 1){
-        countryConfirmedData = ma(countryConfirmedData, 3);
-      } else if(self.state.radioSelected === 2){
-        countryConfirmedData = ema(countryConfirmedData, 3);
-      } else if(self.state.radioSelected === 3){
-        countryConfirmedData = wma(countryConfirmedData, 3);
-      }
-      console.log(countryConfirmedData);
-
-      mainChart.datasets.push({
-        label: data.CountryName,
-        backgroundColor: 'transparent',
-        borderColor: colorCode[index],
-        pointHoverBackgroundColor: '#fff',
-        borderWidth: 2,
-        data: countryConfirmedData,
-      });
-      index++;
-    });
-
-    this.setState({
-      mainChart : mainChart,
-    });
-
-  }
-
-  onRadioBtnClick(e){
-    this.setState({
-      radioSelected : e,
-    }, this.drawCovidGraph);
   }
 
   render() {
 
     return (
-      <div className="animated fadeIn">
-        <Row>
-          <Col>
-            <Card>
-              <CardHeader>
-                <FormGroup row>
-                  <Col md="4">
-                    <Label htmlFor="countries"><mark className="text-primary"><strong><small>*Countries</small></strong></mark></Label>
-                    <Input type="select" name="countries" id="countries" bsSize="sm" value={this.state.inputs.selectedCountry} onChange={this.onCountryChange.bind(this)}>
-                      <option value="">Please add a country</option>
-                      {
-                        this.state.countries.map((r , i) => <option key={i} value={r.Key}>{r.Key + " - " + r.CountryName}</option>)
-                      }
-                    </Input>
-                  </Col>
-                </FormGroup>
-                <Row>
-                {
-                  this.state.inputs.selectedCountries.map((r , i) =>
-                    <Alert className="mb-0 mr-1 pr-5" key={r + i} color={i < 5 ? colorSet[i] : colorSet[4]} isOpen={true} toggle={this.onDismiss.bind(this, r)}>
-                      <div><i className={"h4 flag-icon flag-icon-" + r.toLowerCase()}  title={r} id={"flagId_" + r}></i>&nbsp;{r + " - " + this.state.allDataObject[r].CountryName}</div>
-                    </Alert>
-                  )
-                }
-                </Row>
-              </CardHeader>
-              <CardBody>
-                <Row>
-                  <Col sm="5">
-                    <CardTitle className="mb-0">Covid-19 Cases</CardTitle>
-                    <div className="small text-muted">2020</div>
-                  </Col>
-                  <Col sm="7" className="d-none d-sm-inline-block">
-                    <ButtonToolbar className="float-right" aria-label="Toolbar with button groups">
-                      <ButtonGroup className="mr-3" aria-label="First group">
-                        <Button className="text-light" color="outline-primary" onClick={() => this.onRadioBtnClick(0)} active={this.state.radioSelected !== 0}>Normal</Button>
-                        <Button className="text-light" color="outline-primary" onClick={() => this.onRadioBtnClick(1)} active={this.state.radioSelected !== 1}>MA</Button>
-                        <Button className="text-light" color="outline-primary" onClick={() => this.onRadioBtnClick(2)} active={this.state.radioSelected !== 2}>EMA</Button>
-                        <Button className="text-light" color="outline-primary" onClick={() => this.onRadioBtnClick(3)} active={this.state.radioSelected !== 3}>WMA</Button>
-                      </ButtonGroup>
-                    </ButtonToolbar>
-                  </Col>
-                </Row>
-                <div className="chart-wrapper" style={{ height: 300 + 'px', marginTop: 20 + 'px' }}>
-                   {
-                     <Line data={this.state.mainChart} options={mainChartOpts} height={300} />
-                   }
-                </div>
-              </CardBody>
-              <CardFooter>
-                <Row className="text-center">
-                  <Col sm={12} md className="mb-sm-2 mb-0">
-                    <div className="text-muted">Visits</div>
-                    <strong>29.703 Users (40%)</strong>
-                    <Progress className="progress-xs mt-2" color="success" value="40" />
-                  </Col>
-                  <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
-                    <div className="text-muted">Unique</div>
-                    <strong>24.093 Users (20%)</strong>
-                    <Progress className="progress-xs mt-2" color="info" value="20" />
-                  </Col>
-                  <Col sm={12} md className="mb-sm-2 mb-0">
-                    <div className="text-muted">Pageviews</div>
-                    <strong>78.706 Views (60%)</strong>
-                    <Progress className="progress-xs mt-2" color="warning" value="60" />
-                  </Col>
-                  <Col sm={12} md className="mb-sm-2 mb-0">
-                    <div className="text-muted">New Users</div>
-                    <strong>22.123 Users (80%)</strong>
-                    <Progress className="progress-xs mt-2" color="danger" value="80" />
-                  </Col>
-                  <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
-                    <div className="text-muted">Bounce Rate</div>
-                    <strong>Average Rate (40.15%)</strong>
-                    <Progress className="progress-xs mt-2" color="primary" value="40" />
-                  </Col>
-                </Row>
-              </CardFooter>
-            </Card>
-          </Col>
-        </Row>
-      </div>
+      <ThemeContextConsumer>
+        {context => (
+          <div className="animated fadeIn">
+            <CardColumns className="cols-2">
+              <Card>
+                <CardHeader>
+                  Continental Covid Status
+                </CardHeader>
+                <CardBody>
+                  <div className="chart-wrapper">
+                    <Radar data={this.state.radar} />
+                  </div>
+                </CardBody>
+              </Card>
+              <Card>
+                <CardHeader>
+                  Countries With The Most New Cases
+                </CardHeader>
+                <CardBody>
+                  <div className="chart-wrapper">
+                    <Bar data={bar} options={options} />
+                  </div>
+                </CardBody>
+              </Card>
+            </CardColumns>
+          </div>
+        )}
+      </ThemeContextConsumer>
     );
   }
 }

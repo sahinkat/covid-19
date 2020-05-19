@@ -21,8 +21,13 @@ export default {
       icon: 'icon-star',
     },
     {
-      name: 'Death Per Case',
-      url: '/deathpercase',
+      name: 'Deaths Per Case',
+      url: '/deathspercase',
+      icon: 'icon-star',
+    },
+    {
+      name: 'LogisticRegression',
+      url: '/logistic',
       icon: 'icon-star',
     }
   ],

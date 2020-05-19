@@ -29,7 +29,7 @@ var moment = require('moment');
 const colorSet = ["primary", "warning", "success", "danger", "info"];
 const colorCode = [getStyle('--primary'), getStyle('--warning'), getStyle('--success'), getStyle('--danger'), getStyle('--info')];
 
-class Cases extends Component {
+class DeathsPerCase extends Component {
   constructor(props) {
     super(props);
 
@@ -79,7 +79,7 @@ class Cases extends Component {
       inputs : {
         selectedCountry   : "",
         selectedCountries : [],
-        selectedTypeTotalNewChange : "NewCases"
+        selectedTypeTotalNewChange : "NewDeaths"
       },
       mainChart : {
         labels: [],
@@ -177,7 +177,11 @@ class Cases extends Component {
       mainChart.labels.forEach(function (date) {
         let countryDataAtDate = _.find(data.cases, ['Date', moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD')]);
         if(countryDataAtDate !== undefined){
-          countryConfirmedData.push(countryDataAtDate[selectedTypeTotalNewChange] | 0);
+          countryConfirmedData.push(
+            selectedTypeTotalNewChange === "NewDeaths" ?
+            countryDataAtDate[selectedTypeTotalNewChange] / countryDataAtDate.NewCases | 0 :
+            countryDataAtDate[selectedTypeTotalNewChange] / countryDataAtDate.Confirmed | 0
+          );
           previousNumber = countryDataAtDate[selectedTypeTotalNewChange] | 0;
           lastCountryData = countryDataAtDate;
         } else {
@@ -253,8 +257,8 @@ class Cases extends Component {
                       <Col md="4">
                         <Label htmlFor="typeTotalNew"><mark className="text-primary"><strong><small>*Type</small></strong></mark></Label>
                         <Input type="select" name="typeTotalNew" id="typeTotalNew" bsSize="sm" value={this.state.inputs.selectedTypeTotalNewChange} onChange={this.onTypeTotalNewChange.bind(this, context)}>
-                          <option value="NewCases">New Cases</option>
-                          <option value="Confirmed">Confirmed</option>
+                          <option value="NewDeaths">New Deaths</option>
+                          <option value="Deaths">Deaths</option>
                         </Input>
                       </Col>
                     </FormGroup>
@@ -324,4 +328,4 @@ class Cases extends Component {
   }
 }
 
-export default Cases;
+export default DeathsPerCase;

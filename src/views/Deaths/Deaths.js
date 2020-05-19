@@ -14,7 +14,6 @@ import {
   FormGroup,
   Input,
   Label,
-  Progress,
   Row
 } from 'reactstrap';
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
@@ -22,10 +21,10 @@ import { getStyle } from '@coreui/coreui/dist/js/coreui-utilities';
 import {
   ma, ema, wma
 } from 'moving-averages'
+import { ThemeContextConsumer } from "../../ThemeContextProvider";
 
 var _ = require('lodash');
 var moment = require('moment');
-const axios = require('axios');
 
 const colorSet = ["primary", "warning", "success", "danger", "info"];
 const colorCode = [getStyle('--primary'), getStyle('--warning'), getStyle('--success'), getStyle('--danger'), getStyle('--info')];
@@ -50,13 +49,13 @@ class Deaths extends Component {
         },
         maintainAspectRatio: false,
         legend: {
-          display: false,
+          display: true,
         },
         scales: {
           xAxes: [
             {
               gridLines: {
-                drawOnChartArea: false,
+                drawOnChartArea: true,
               },
             }],
           yAxes: [
@@ -64,8 +63,7 @@ class Deaths extends Component {
               ticks: {
                 beginAtZero: true,
                 maxTicksLimit: 40,
-                stepSize: 100,
-                max: 1500,
+                stepSize: 1000,
               },
             }],
         },
@@ -78,56 +76,10 @@ class Deaths extends Component {
           },
         },
       },
-      allDataObject : {
-        "TR" : {
-          "Key":"TR",
-          "CountryCode":"TR",
-          "CountryName":"Turkey",
-          "RegionCode":null,
-          "RegionName":null,
-          "Latitude":"38.963745",
-          "Longitude":"35.243322",
-          "Population":83429615,
-          "cases" : [
-            {
-              "Date":"YYYY-MM-DD",
-              "Key": "TR",
-              "Confirmed":0.0,
-              "Deaths":0.0,
-              "NewCases":0.0,
-              "NewDeaths":0.0,
-              "NewMild":0.0,
-              "NewSevere":0.0,
-              "NewCritical":0.0,
-              "CurrentlyMild":0.0,
-              "CurrentlySevere":0.0,
-              "CurrentlyCritical":0.0
-            }
-          ],
-          "mobilityData" : [
-            {
-              "Date":"YYYY-MM-DD",
-              "Key": "TR",
-              "RetailAndRecreation":0.0,
-              "GroceryAndPharmacy":0.0,
-              "Parks":0.0,
-              "TransitStations":0.0,
-              "Workplaces":0.0,
-              "Residential":0.0
-            }
-          ],
-        }
-      },
-      countries : [
-        {
-          "Key":"TR",
-          "CountryCode":"TR",
-          "CountryName":"Turkey",
-        }
-      ],
       inputs : {
         selectedCountry   : "",
         selectedCountries : [],
+        selectedTypeTotalNewChange : "NewDeaths"
       },
       mainChart : {
         labels: [],
@@ -139,78 +91,7 @@ class Deaths extends Component {
 
   loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
 
-  componentDidMount() {
-    this.getCovidMetaData();
-  }
-
-  getCovidMetaData() {
-    let self = this;
-    axios.get('https://open-covid-19.github.io/data/metadata.json')
-      .then(function ({ data }) {
-          let allDataObject = {};
-          let countries = [];
-          data.forEach(country => {
-            allDataObject[country["Key"]] = country;
-            if(country["Key"].length < 3) {
-              countries.push({
-                "Key":country["Key"],
-                "CountryCode":country["CountryCode"],
-                "CountryName":country["CountryName"]
-              });
-            }
-          });
-
-          self.setState({
-            allDataObject : allDataObject,
-            countries     : countries
-          });
-
-          self.getCases();
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error);
-      });
-  }
-
-  getCases() {
-    let self = this;
-    axios.get('https://open-covid-19.github.io/data/data_minimal.json')
-      .then(function ({ data }) {
-        let data_minimal = data;
-        axios.get('https://open-covid-19.github.io/data/data_categories.json')
-          .then(function ({ data }) {
-            let data_categories = data;
-            let concattedCaseData = _(data_minimal)
-                                .concat(data_categories)
-                                .groupBy("Key")
-                                .mapValues(function(values) {
-                                  return _(values)
-                                        .groupBy("Date")
-                                        .map(objs => _.assignWith({}, ...objs, (val1, val2) => val1 || val2))
-                                        .value();
-                                }).value();
-            let allDataObject = self.state.allDataObject;
-            Object.keys(allDataObject).forEach(function(key) {
-              allDataObject[key].cases = concattedCaseData[key];
-            });
-
-            self.setState({
-              allDataObject : allDataObject,
-            });
-          })
-          .catch(function (error) {
-            // handle error
-            console.log(error);
-          });
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error);
-      });
-  }
-
-  onCountryChange(selectedCountry) {
+  onCountryChange(context, selectedCountry) {
     if(selectedCountry.target.value !== ''){
       let inputs = this.state.inputs;
       inputs.selectedCountries.push(selectedCountry.target.value);
@@ -219,10 +100,22 @@ class Deaths extends Component {
       });
     }
 
-    this.drawCovidGraph();
+    this.drawCovidGraph(context);
   }
 
-  onDismiss(removedCountry, e) {
+  onTypeTotalNewChange(context, selectedTypeTotalNewChange) {
+    if(selectedTypeTotalNewChange.target.value !== ''){
+      let inputs = this.state.inputs;
+      inputs.selectedTypeTotalNewChange = selectedTypeTotalNewChange.target.value;
+      this.setState({
+        inputs : inputs,
+      });
+    }
+
+    this.drawCovidGraph(context);
+  }
+
+  onDismiss(removedCountry, context) {
     if(removedCountry !== ''){
       let inputs = this.state.inputs;
       _.remove(inputs.selectedCountries, function (country) {
@@ -233,13 +126,20 @@ class Deaths extends Component {
       });
     }
 
-    this.drawCovidGraph();
+    this.drawCovidGraph(context);
   }
 
-  drawCovidGraph(){
+  onRadioBtnClick(e, context){
+    this.setState({
+      radioSelected : e,
+    }, this.drawCovidGraph(context));
+  }
+
+  drawCovidGraph(context){
     let self = this;
-    let allDataObject = this.state.allDataObject;
+    let allDataObject = context.allDataObject;
     let selectedCountries = this.state.inputs.selectedCountries;
+    let selectedTypeTotalNewChange = this.state.inputs.selectedTypeTotalNewChange;
     let mainChart = this.state.mainChart;
 
     let graphData = [];
@@ -265,18 +165,30 @@ class Deaths extends Component {
 
     let index = 0;
     let maxValue = 0;
+    let totalCasesFooter = 0;
+    let totalDeathsFooter = 0;
+    let totalTestsFooter = 0;
+    let totalNewCasesFooter = 0;
+    let totalNewDeathsFooter = 0;
     graphData.forEach(function (data) {
       let countryConfirmedData = [];
       let previousNumber = 0;
+      let lastCountryData = {};
       mainChart.labels.forEach(function (date) {
         let countryDataAtDate = _.find(data.cases, ['Date', moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD')]);
         if(countryDataAtDate !== undefined){
-          countryConfirmedData.push(countryDataAtDate.NewDeaths);
-          previousNumber = countryDataAtDate.NewDeaths;
+          countryConfirmedData.push(countryDataAtDate[selectedTypeTotalNewChange] | 0);
+          previousNumber = countryDataAtDate[selectedTypeTotalNewChange] | 0;
+          lastCountryData = countryDataAtDate;
         } else {
           countryConfirmedData.push(previousNumber);
         }
       });
+      totalCasesFooter += lastCountryData["Confirmed"] | 0;
+      totalDeathsFooter += lastCountryData["Deaths"] | 0;
+      totalTestsFooter += lastCountryData["Tests"] | 0;
+      totalNewCasesFooter += lastCountryData["NewCases"] | 0;
+      totalNewDeathsFooter += lastCountryData["NewDeaths"] | 0;
       if(self.state.radioSelected === 1){
         countryConfirmedData = ma(countryConfirmedData, 3);
       } else if(self.state.radioSelected === 2){
@@ -309,101 +221,105 @@ class Deaths extends Component {
     this.setState({
       mainChart : mainChart,
       mainChartOpts : mainChartOpts,
+      totalCasesFooter : totalCasesFooter,
+      totalDeathsFooter : totalDeathsFooter,
+      totalTestsFooter : totalTestsFooter,
+      totalNewCasesFooter : totalNewCasesFooter,
+      totalNewDeathsFooter : totalNewDeathsFooter
     });
 
-  }
-
-  onRadioBtnClick(e){
-    this.setState({
-      radioSelected : e,
-    }, this.drawCovidGraph);
   }
 
   render() {
 
     return (
-      <div className="animated fadeIn">
-        <Row>
-          <Col>
-            <Card>
-              <CardHeader>
-                <FormGroup row>
-                  <Col md="4">
-                    <Label htmlFor="countries"><mark className="text-primary"><strong><small>*Countries</small></strong></mark></Label>
-                    <Input type="select" name="countries" id="countries" bsSize="sm" value={this.state.inputs.selectedCountry} onChange={this.onCountryChange.bind(this)}>
-                      <option value="">Please add a country</option>
-                      {
-                        this.state.countries.map((r , i) => <option key={i} value={r.Key}>{r.Key + " - " + r.CountryName}</option>)
-                      }
-                    </Input>
-                  </Col>
-                </FormGroup>
-                <Row>
-                {
-                  this.state.inputs.selectedCountries.map((r , i) =>
-                    <Alert className="mb-0 mr-1 pr-5" key={r + i} color={i < 5 ? colorSet[i] : colorSet[4]} isOpen={true} toggle={this.onDismiss.bind(this, r)}>
-                      <div><i className={"h4 flag-icon flag-icon-" + r.toLowerCase()}  title={r} id={"flagId_" + r}></i>&nbsp;{r + " - " + this.state.allDataObject[r].CountryName}</div>
-                    </Alert>
-                  )
-                }
-                </Row>
-              </CardHeader>
-              <CardBody>
-                <Row>
-                  <Col sm="5">
-                    <CardTitle className="mb-0">Covid-19 Deaths</CardTitle>
-                    <div className="small text-muted">2020</div>
-                  </Col>
-                  <Col sm="7" className="d-none d-sm-inline-block">
-                    <ButtonToolbar className="float-right" aria-label="Toolbar with button groups">
-                      <ButtonGroup className="mr-3" aria-label="First group">
-                        <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(0)} active={this.state.radioSelected !== 0}>Normal</Button>
-                        <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(1)} active={this.state.radioSelected !== 1}>MA</Button>
-                        <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(2)} active={this.state.radioSelected !== 2}>EMA</Button>
-                        <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(3)} active={this.state.radioSelected !== 3}>WMA</Button>
-                      </ButtonGroup>
-                    </ButtonToolbar>
-                  </Col>
-                </Row>
-                <div className="chart-wrapper" style={{ height: 400 + 'px', marginTop: 20 + 'px' }}>
-                   {
-                     <Line data={this.state.mainChart} options={this.state.mainChartOpts} height={400} />
-                   }
-                </div>
-              </CardBody>
-              <CardFooter>
-                <Row className="text-center">
-                  <Col sm={12} md className="mb-sm-2 mb-0">
-                    <div className="text-muted">Visits</div>
-                    <strong>29.703 Users (40%)</strong>
-                    <Progress className="progress-xs mt-2" color="success" value="40" />
-                  </Col>
-                  <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
-                    <div className="text-muted">Unique</div>
-                    <strong>24.093 Users (20%)</strong>
-                    <Progress className="progress-xs mt-2" color="info" value="20" />
-                  </Col>
-                  <Col sm={12} md className="mb-sm-2 mb-0">
-                    <div className="text-muted">Pageviews</div>
-                    <strong>78.706 Views (60%)</strong>
-                    <Progress className="progress-xs mt-2" color="warning" value="60" />
-                  </Col>
-                  <Col sm={12} md className="mb-sm-2 mb-0">
-                    <div className="text-muted">New Users</div>
-                    <strong>22.123 Users (80%)</strong>
-                    <Progress className="progress-xs mt-2" color="danger" value="80" />
-                  </Col>
-                  <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
-                    <div className="text-muted">Bounce Rate</div>
-                    <strong>Average Rate (40.15%)</strong>
-                    <Progress className="progress-xs mt-2" color="primary" value="40" />
-                  </Col>
-                </Row>
-              </CardFooter>
-            </Card>
-          </Col>
-        </Row>
-      </div>
+      <ThemeContextConsumer>
+        {context => (
+          <div className="animated fadeIn">
+            <Row>
+              <Col>
+                <Card>
+                  <CardHeader>
+                    <FormGroup row>
+                      <Col md="4">
+                        <Label htmlFor="countries"><mark className="text-primary"><strong><small>*Countries</small></strong></mark></Label>
+                        <Input type="select" name="countries" id="countries" bsSize="sm" value={this.state.inputs.selectedCountry} onChange={this.onCountryChange.bind(this, context)}>
+                          <option value="">Please add a country</option>
+                          {
+                            context.countries.map((r , i) => <option key={i} value={r.Key}>{r.CountryName}</option>)
+                          }
+                        </Input>
+                      </Col>
+                      <Col md="4">
+                        <Label htmlFor="typeTotalNew"><mark className="text-primary"><strong><small>*Type</small></strong></mark></Label>
+                        <Input type="select" name="typeTotalNew" id="typeTotalNew" bsSize="sm" value={this.state.inputs.selectedTypeTotalNewChange} onChange={this.onTypeTotalNewChange.bind(this, context)}>
+                          <option value="NewDeaths">New Deaths</option>
+                          <option value="Deaths">Deaths</option>
+                        </Input>
+                      </Col>
+                    </FormGroup>
+                    <Row>
+                    {
+                      this.state.inputs.selectedCountries.map((r , i) =>
+                        <Alert className="mb-0 mr-1 pr-5" key={r + i} color={i < 5 ? colorSet[i] : colorSet[4]} isOpen={true} toggle={this.onDismiss.bind(this, r, context)}>
+                          <div>{context.allDataObject[r].CountryName}</div>
+                        </Alert>
+                      )
+                    }
+                    </Row>
+                  </CardHeader>
+                  <CardBody>
+                    <Row>
+                      <Col sm="5">
+                        <CardTitle className="mb-0">Covid-19 Statistics</CardTitle>
+                      </Col>
+                      <Col sm="7" className="d-none d-sm-inline-block">
+                        <ButtonToolbar className="float-right" aria-label="Toolbar with button groups">
+                          <ButtonGroup className="mr-3" aria-label="First group">
+                            <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(0, context)} active={this.state.radioSelected !== 0}>Normal</Button>
+                            <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(1, context)} active={this.state.radioSelected !== 1}>MA</Button>
+                            <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(2, context)} active={this.state.radioSelected !== 2}>EMA</Button>
+                            <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(3, context)} active={this.state.radioSelected !== 3}>WMA</Button>
+                          </ButtonGroup>
+                        </ButtonToolbar>
+                      </Col>
+                    </Row>
+                    <div className="chart-wrapper" style={{ height: 300 + 'px', marginTop: 5 + 'px' }}>
+                       {
+                         <Line data={this.state.mainChart} options={this.state.mainChartOpts} height={300} />
+                       }
+                    </div>
+                  </CardBody>
+                  <CardFooter>
+                    <Row className="text-center">
+                      <Col sm={12} md className="mb-sm-2 mb-0">
+                        <div className="text-muted">Total Cases</div>
+                        <strong>{this.state.totalCasesFooter}</strong>
+                      </Col>
+                      <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
+                        <div className="text-muted">Total Deaths</div>
+                        <strong>{this.state.totalDeathsFooter}</strong>
+                      </Col>
+                      <Col sm={12} md className="mb-sm-2 mb-0">
+                        <div className="text-muted">Total Tests</div>
+                        <strong>{this.state.totalTestsFooter}</strong>
+                      </Col>
+                      <Col sm={12} md className="mb-sm-2 mb-0">
+                        <div className="text-muted">New Cases</div>
+                        <strong>{this.state.totalNewCasesFooter}</strong>
+                      </Col>
+                      <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
+                        <div className="text-muted">New Deaths</div>
+                        <strong>{this.state.totalNewDeathsFooter}</strong>
+                      </Col>
+                    </Row>
+                  </CardFooter>
+                </Card>
+              </Col>
+            </Row>
+          </div>
+        )}
+      </ThemeContextConsumer>
     );
   }
 }

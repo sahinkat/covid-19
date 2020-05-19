@@ -7,7 +7,6 @@ import {
   ButtonToolbar,
   Card,
   CardBody,
-  CardFooter,
   CardHeader,
   CardTitle,
   Col,
@@ -21,6 +20,7 @@ import { getStyle } from '@coreui/coreui/dist/js/coreui-utilities';
 import {
   ma, ema, wma
 } from 'moving-averages'
+import regression from 'regression';
 import { ThemeContextConsumer } from "../../ThemeContextProvider";
 
 var _ = require('lodash');
@@ -29,11 +29,17 @@ var moment = require('moment');
 const colorSet = ["primary", "warning", "success", "danger", "info"];
 const colorCode = [getStyle('--primary'), getStyle('--warning'), getStyle('--success'), getStyle('--danger'), getStyle('--info')];
 
+var A, B, C;
+var errors = [];
+
 class Cases extends Component {
   constructor(props) {
     super(props);
+    this.train = this.train.bind(this);
+    this.predict = this.predict.bind(this);
 
     this.state = {
+      maxConfirmed : 180000,
       mainChartOpts : {
         tooltips: {
           enabled: false,
@@ -49,13 +55,13 @@ class Cases extends Component {
         },
         maintainAspectRatio: false,
         legend: {
-          display: true,
+          display: false,
         },
         scales: {
           xAxes: [
             {
               gridLines: {
-                drawOnChartArea: true,
+                drawOnChartArea: false,
               },
             }],
           yAxes: [
@@ -64,6 +70,7 @@ class Cases extends Component {
                 beginAtZero: true,
                 maxTicksLimit: 40,
                 stepSize: 1000,
+                max: 300000,
               },
             }],
         },
@@ -76,10 +83,16 @@ class Cases extends Component {
           },
         },
       },
+      countries : [
+        {
+          "Key":"TR",
+          "CountryCode":"TR",
+          "CountryName":"Turkey",
+        }
+      ],
       inputs : {
         selectedCountry   : "",
         selectedCountries : [],
-        selectedTypeTotalNewChange : "NewCases"
       },
       mainChart : {
         labels: [],
@@ -95,18 +108,6 @@ class Cases extends Component {
     if(selectedCountry.target.value !== ''){
       let inputs = this.state.inputs;
       inputs.selectedCountries.push(selectedCountry.target.value);
-      this.setState({
-        inputs : inputs,
-      });
-    }
-
-    this.drawCovidGraph(context);
-  }
-
-  onTypeTotalNewChange(context, selectedTypeTotalNewChange) {
-    if(selectedTypeTotalNewChange.target.value !== ''){
-      let inputs = this.state.inputs;
-      inputs.selectedTypeTotalNewChange = selectedTypeTotalNewChange.target.value;
       this.setState({
         inputs : inputs,
       });
@@ -132,14 +133,25 @@ class Cases extends Component {
   onRadioBtnClick(e, context){
     this.setState({
       radioSelected : e,
-    }, this.drawCovidGraph(context));
+    });
+
+    this.drawCovidGraph(context)
+  }
+
+  onMaxConfirmedChange(context, e){
+    if(e.target.value !== ''){
+      this.setState({
+        maxConfirmed : e.target.value,
+      });
+    }
+
+    this.drawCovidGraph(context);
   }
 
   drawCovidGraph(context){
     let self = this;
     let allDataObject = context.allDataObject;
     let selectedCountries = this.state.inputs.selectedCountries;
-    let selectedTypeTotalNewChange = this.state.inputs.selectedTypeTotalNewChange;
     let mainChart = this.state.mainChart;
 
     let graphData = [];
@@ -157,6 +169,7 @@ class Cases extends Component {
     });
     let minDate = new Date(strMinDate);
     let today = new Date();
+    today.setDate(today.getDate() + 100);
 
     while(minDate < today) {
       mainChart.labels.push(moment(minDate).format('DD/MM/YYYY'));
@@ -164,37 +177,54 @@ class Cases extends Component {
     }
 
     let index = 0;
-    let maxValue = 0;
-    let totalCasesFooter = 0;
-    let totalDeathsFooter = 0;
-    let totalTestsFooter = 0;
-    let totalNewCasesFooter = 0;
-    let totalNewDeathsFooter = 0;
+    let xIndex = 0;
+    let dataForLogistic = [];
+    let xDataForLogistic = [];
+    let yDataForLogistic = [];
     graphData.forEach(function (data) {
       let countryConfirmedData = [];
       let previousNumber = 0;
-      let lastCountryData = {};
       mainChart.labels.forEach(function (date) {
         let countryDataAtDate = _.find(data.cases, ['Date', moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD')]);
         if(countryDataAtDate !== undefined){
-          countryConfirmedData.push(countryDataAtDate[selectedTypeTotalNewChange] | 0);
-          previousNumber = countryDataAtDate[selectedTypeTotalNewChange] | 0;
-          lastCountryData = countryDataAtDate;
+          countryConfirmedData.push(countryDataAtDate.Confirmed);
+          previousNumber = countryDataAtDate.Confirmed;
+          dataForLogistic.push([xIndex, countryDataAtDate.Confirmed]);
+          yDataForLogistic.push(countryDataAtDate.Confirmed);
         } else {
           countryConfirmedData.push(previousNumber);
+          dataForLogistic.push([xIndex, previousNumber])
+          yDataForLogistic.push(previousNumber);
         }
+        xDataForLogistic.push(xIndex);
+        xIndex++;
       });
-      totalCasesFooter += lastCountryData["Confirmed"] | 0;
-      totalDeathsFooter += lastCountryData["Deaths"] | 0;
-      totalTestsFooter += lastCountryData["Tests"] | 0;
-      totalNewCasesFooter += lastCountryData["NewCases"] | 0;
-      totalNewDeathsFooter += lastCountryData["NewDeaths"] | 0;
+      let result = regression.polynomial(dataForLogistic, { order: 3 });
+      let gradient = result.equation[0];
+      let yIntercept = result.equation[1];
+
       if(self.state.radioSelected === 1){
         countryConfirmedData = ma(countryConfirmedData, 3);
       } else if(self.state.radioSelected === 2){
         countryConfirmedData = ema(countryConfirmedData, 3);
       } else if(self.state.radioSelected === 3){
         countryConfirmedData = wma(countryConfirmedData, 3);
+      }
+
+      //epochs = 500;
+      //alpha = 0.2;
+      self.train(500, 0.2, yDataForLogistic);
+
+      let predictedConfirmedData = [];
+      let predictIndex = 0;
+      countryConfirmedData.forEach(function (data) {
+        //predictedConfirmedData.push(result.predict(predictIndex)[1]);
+        predictedConfirmedData.push(self.predict(predictIndex));
+        predictIndex++;
+      });
+
+      for(var i=0; i<100; i++){
+        predictedConfirmedData.push(self.predict(predictIndex + i));
       }
 
       mainChart.datasets.push({
@@ -205,29 +235,62 @@ class Cases extends Component {
         borderWidth: 2,
         data: countryConfirmedData,
       });
+      mainChart.datasets.push({
+        label: 'Prediction',
+        backgroundColor: 'transparent',
+        borderColor: colorCode[index+1],
+        pointHoverBackgroundColor: '#fff',
+        borderWidth: 2,
+        data: predictedConfirmedData,
+      });
       index++;
-      let tempMaxValue = _.max(countryConfirmedData);
-      if(maxValue < tempMaxValue){
-        maxValue = tempMaxValue;
-      }
-    });
-    let mainChartOpts = this.state.mainChartOpts;
-    mainChartOpts.scales.yAxes.ticks = {
-      beginAtZero: true,
-      maxTicksLimit: 50,
-      stepSize: Math.ceil(maxValue*1.1/50),
-      max: Math.ceil(maxValue*1.1),
-    };
-    this.setState({
-      mainChart : mainChart,
-      mainChartOpts : mainChartOpts,
-      totalCasesFooter : totalCasesFooter,
-      totalDeathsFooter : totalDeathsFooter,
-      totalTestsFooter : totalTestsFooter,
-      totalNewCasesFooter : totalNewCasesFooter,
-      totalNewDeathsFooter : totalNewDeathsFooter
     });
 
+    this.setState({
+      mainChart : mainChart,
+    });
+
+  }
+
+  train(epochs, alpha, data){
+      errors =[];
+      A = 0.0;
+      B = 0.0;
+      C = 0.0;
+
+      for (var i=0; i<epochs; i++){
+          var error;
+          let trainIndex = 0;
+          data.forEach(d=>{
+              var predY;
+              var func;
+              func = A*Math.pow(trainIndex, 1.85)/100+B*trainIndex/100+C;
+              predY = 1/(1+Math.exp(-func));
+              error = predY - d/this.state.maxConfirmed;
+
+              A = A + alpha*-error*predY*(1-predY)*Math.pow(trainIndex, 1.85)/100;
+              B = B + alpha*-error*predY*(1-predY)*trainIndex/100;
+              C = C + alpha*-error*predY*(1-predY)*1.0;
+
+              trainIndex++;
+              // errors.push({error:error, iteration:count});
+          })
+
+          errors.push({error:error, epoch:i});
+
+          var accuracy = 1+Math.round(error*100)/100;
+
+          var progresspercent = 100*i/500;
+      }
+  }
+
+  predict(x1){
+    var predY;
+    var func;
+    func = A*Math.pow(x1, 1.85)/100+B*x1/100+C;
+    predY = this.state.maxConfirmed/(1+Math.exp(-func));
+
+    return predY;
   }
 
   render() {
@@ -243,18 +306,11 @@ class Cases extends Component {
                     <FormGroup row>
                       <Col md="4">
                         <Label htmlFor="countries"><mark className="text-primary"><strong><small>*Countries</small></strong></mark></Label>
-                        <Input type="select" name="countries" id="countries" bsSize="sm" value={this.state.inputs.selectedCountry} onChange={this.onCountryChange.bind(this, context)}>
+                        <Input disabled={this.state.inputs.selectedCountries.length > 0 ? true : false} type="select" name="countries" id="countries" bsSize="sm" value={this.state.inputs.selectedCountry} onChange={this.onCountryChange.bind(this, context)}>
                           <option value="">Please add a country</option>
                           {
                             context.countries.map((r , i) => <option key={i} value={r.Key}>{r.CountryName}</option>)
                           }
-                        </Input>
-                      </Col>
-                      <Col md="4">
-                        <Label htmlFor="typeTotalNew"><mark className="text-primary"><strong><small>*Type</small></strong></mark></Label>
-                        <Input type="select" name="typeTotalNew" id="typeTotalNew" bsSize="sm" value={this.state.inputs.selectedTypeTotalNewChange} onChange={this.onTypeTotalNewChange.bind(this, context)}>
-                          <option value="NewCases">New Cases</option>
-                          <option value="Confirmed">Confirmed</option>
                         </Input>
                       </Col>
                     </FormGroup>
@@ -270,10 +326,17 @@ class Cases extends Component {
                   </CardHeader>
                   <CardBody>
                     <Row>
-                      <Col sm="5">
-                        <CardTitle className="mb-0">Covid-19 Statistics</CardTitle>
+                      <Col sm="3">
+                        <CardTitle className="mb-0">Covid-19 Cases</CardTitle>
+                        <div className="small text-muted">2020</div>
                       </Col>
-                      <Col sm="7" className="d-none d-sm-inline-block">
+                      <Col sm="3">
+                        <FormGroup>
+                          <Label htmlFor="name">Prediction Number</Label>
+                          <Input type="text" id="maxConfirmed" name="maxConfirmed" value={this.state.maxConfirmed} placeholder="Enter max confirmed" onChange={this.onMaxConfirmedChange.bind(this, context)} />
+                        </FormGroup>
+                      </Col>
+                      <Col sm="6" className="d-none d-sm-inline-block">
                         <ButtonToolbar className="float-right" aria-label="Toolbar with button groups">
                           <ButtonGroup className="mr-3" aria-label="First group">
                             <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(0, context)} active={this.state.radioSelected !== 0}>Normal</Button>
@@ -284,36 +347,12 @@ class Cases extends Component {
                         </ButtonToolbar>
                       </Col>
                     </Row>
-                    <div className="chart-wrapper" style={{ height: 300 + 'px', marginTop: 5 + 'px' }}>
+                    <div className="chart-wrapper" style={{ height: 400 + 'px', marginTop: 20 + 'px' }}>
                        {
-                         <Line data={this.state.mainChart} options={this.state.mainChartOpts} height={300} />
+                         <Line data={this.state.mainChart} options={this.state.mainChartOpts} height={400} />
                        }
                     </div>
                   </CardBody>
-                  <CardFooter>
-                    <Row className="text-center">
-                      <Col sm={12} md className="mb-sm-2 mb-0">
-                        <div className="text-muted">Total Cases</div>
-                        <strong>{this.state.totalCasesFooter}</strong>
-                      </Col>
-                      <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
-                        <div className="text-muted">Total Deaths</div>
-                        <strong>{this.state.totalDeathsFooter}</strong>
-                      </Col>
-                      <Col sm={12} md className="mb-sm-2 mb-0">
-                        <div className="text-muted">Total Tests</div>
-                        <strong>{this.state.totalTestsFooter}</strong>
-                      </Col>
-                      <Col sm={12} md className="mb-sm-2 mb-0">
-                        <div className="text-muted">New Cases</div>
-                        <strong>{this.state.totalNewCasesFooter}</strong>
-                      </Col>
-                      <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
-                        <div className="text-muted">New Deaths</div>
-                        <strong>{this.state.totalNewDeathsFooter}</strong>
-                      </Col>
-                    </Row>
-                  </CardFooter>
                 </Card>
               </Col>
             </Row>

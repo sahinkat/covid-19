@@ -1,0 +1,6 @@
+{
+  "name": "LogisticRegression",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./LogisticRegression.js"
+}
