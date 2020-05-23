@@ -1,3 +1,4 @@
+import data_test from '../../data/data_test';
 import React, { Component } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
@@ -8,6 +9,7 @@ import {
   Card,
   CardBody,
   CardHeader,
+  CardFooter,
   CardTitle,
   Col,
   FormGroup,
@@ -25,6 +27,7 @@ import { ThemeContextConsumer } from "../../ThemeContextProvider";
 
 const moment = require('moment');
 const _ = require('lodash');
+const getCountryISO3 = require("country-iso-2-to-3");
 
 const colorSet = ["primary", "warning", "success", "danger", "info"];
 const colorCode = [getStyle('--primary'), getStyle('--warning'), getStyle('--success'), getStyle('--danger'), getStyle('--info')];
@@ -57,8 +60,6 @@ const mainChartOpts = {
         ticks: {
           beginAtZero: true,
           maxTicksLimit: 40,
-          stepSize: 0.01,
-          max: 0.4,
         },
       }],
   },
@@ -105,18 +106,37 @@ class CasesPerTest extends Component {
   }
 
   onCountryChange(context, selectedCountry) {
-    if(selectedCountry.target.value !== ''){
+    selectedCountry = selectedCountry.target.value;
+    if(selectedCountry !== ''){
+      let testDataAll = data_test();
       let inputs = this.state.inputs;
-      inputs.selectedCountries.push(selectedCountry.target.value);
+      inputs.selectedCountries.push(selectedCountry);
+
+      let countryTestData = _.filter(testDataAll, {"Code":getCountryISO3(selectedCountry)});
+      let concattedCaseData = context.allDataObject[selectedCountry].cases;
+      let newConcattedCaseData = [];
+      if(countryTestData !== undefined && countryTestData.length > 0){
+        concattedCaseData.forEach(function(caseData) {
+          if(caseData !== undefined){
+            let countryTestDataAtDate = _.find(countryTestData, function(e) {
+              return moment(caseData["Date"], 'YYYY-MM-DD').isSame(moment(e["Date"], 'll'), 'day');
+            });
+            if(countryTestDataAtDate !== undefined && countryTestDataAtDate["Total tests"] > 0){
+              caseData["Tests"] = countryTestDataAtDate["Total tests"];
+            }
+            newConcattedCaseData.push(caseData);
+          }
+        });
+      }
+      context.allDataObject[selectedCountry].cases = newConcattedCaseData;
       this.setState({
         inputs : inputs,
       });
     }
-
     this.drawCovidGraph(context);
   }
 
-  onDismiss(context, removedCountry) {
+  onDismiss(removedCountry, context) {
     if(removedCountry !== ''){
       let inputs = this.state.inputs;
       _.remove(inputs.selectedCountries, function (country) {
@@ -168,10 +188,16 @@ class CasesPerTest extends Component {
     }
 
     let index = 0;
+    let totalCasesFooter = 0;
+    let totalDeathsFooter = 0;
+    let totalTestsFooter = 0;
+    let totalNewCasesFooter = 0;
+    let totalNewDeathsFooter = 0;
     graphData.forEach(function (data) {
       let countryConfirmedData = [];
       let previousNumber = 0;
       let previousTestNumber = 1;
+      let lastCountryData = {};
       mainChart.labels.forEach(function (date) {
         let countryDataAtDate = _.find(data.cases, ['Date', moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD')]);
         if(countryDataAtDate !== undefined){
@@ -187,10 +213,17 @@ class CasesPerTest extends Component {
             countryConfirmedData.push(0);
           }
           previousNumber = countryDataAtDate[selectedTypeTotalNewChange] | 0;
+          lastCountryData = countryDataAtDate;
+          totalNewCasesFooter += lastCountryData["NewCases"] | 0;
+          totalNewDeathsFooter += lastCountryData["NewDeaths"] | 0;
+          totalTestsFooter = lastCountryData["Tests"] ? lastCountryData["Tests"] : totalTestsFooter;
         } else {
           countryConfirmedData.push(previousTestNumber > 1 ? previousNumber/previousTestNumber : 0);
         }
       });
+      totalCasesFooter += lastCountryData["Confirmed"] | 0;
+      totalDeathsFooter += lastCountryData["Deaths"] | 0;
+
       if(self.state.radioSelected === 1){
         countryConfirmedData = ma(countryConfirmedData, 3);
       } else if(self.state.radioSelected === 2){
@@ -198,7 +231,6 @@ class CasesPerTest extends Component {
       } else if(self.state.radioSelected === 3){
         countryConfirmedData = wma(countryConfirmedData, 3);
       }
-      console.log(countryConfirmedData);
 
       mainChart.datasets.push({
         label: data.CountryName,
@@ -213,6 +245,11 @@ class CasesPerTest extends Component {
 
     this.setState({
       mainChart : mainChart,
+      totalCasesFooter : totalCasesFooter,
+      totalDeathsFooter : totalDeathsFooter,
+      totalTestsFooter : totalTestsFooter,
+      totalNewCasesFooter : totalNewCasesFooter,
+      totalNewDeathsFooter : totalNewDeathsFooter
     });
 
   }
@@ -278,6 +315,30 @@ class CasesPerTest extends Component {
                        }
                     </div>
                   </CardBody>
+                  <CardFooter>
+                    <Row className="text-center">
+                      <Col sm={12} md className="mb-sm-2 mb-0">
+                        <div className="text-muted">Total Cases</div>
+                        <strong>{this.state.totalCasesFooter}</strong>
+                      </Col>
+                      <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
+                        <div className="text-muted">Total Deaths</div>
+                        <strong>{this.state.totalDeathsFooter}</strong>
+                      </Col>
+                      <Col sm={12} md className="mb-sm-2 mb-0">
+                        <div className="text-muted">Total Tests</div>
+                        <strong>{this.state.totalTestsFooter}</strong>
+                      </Col>
+                      <Col sm={12} md className="mb-sm-2 mb-0">
+                        <div className="text-muted">New Cases</div>
+                        <strong>{this.state.totalNewCasesFooter}</strong>
+                      </Col>
+                      <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
+                        <div className="text-muted">New Deaths</div>
+                        <strong>{this.state.totalNewDeathsFooter}</strong>
+                      </Col>
+                    </Row>
+                  </CardFooter>
                 </Card>
               </Col>
             </Row>

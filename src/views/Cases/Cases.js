@@ -25,6 +25,7 @@ import { ThemeContextConsumer } from "../../ThemeContextProvider";
 
 var _ = require('lodash');
 var moment = require('moment');
+var Loader = require('react-loader');
 
 const colorSet = ["primary", "warning", "success", "danger", "info"];
 const colorCode = [getStyle('--primary'), getStyle('--warning'), getStyle('--success'), getStyle('--danger'), getStyle('--info')];
@@ -63,7 +64,6 @@ class Cases extends Component {
               ticks: {
                 beginAtZero: true,
                 maxTicksLimit: 40,
-                stepSize: 1000,
               },
             }],
         },
@@ -92,9 +92,11 @@ class Cases extends Component {
   loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
 
   onCountryChange(context, selectedCountry) {
-    if(selectedCountry.target.value !== ''){
+    selectedCountry = selectedCountry.target.value;
+    if(selectedCountry !== ''){
       let inputs = this.state.inputs;
-      inputs.selectedCountries.push(selectedCountry.target.value);
+      inputs.selectedCountries.push(selectedCountry);
+
       this.setState({
         inputs : inputs,
       });
@@ -167,7 +169,6 @@ class Cases extends Component {
     let maxValue = 0;
     let totalCasesFooter = 0;
     let totalDeathsFooter = 0;
-    let totalTestsFooter = 0;
     let totalNewCasesFooter = 0;
     let totalNewDeathsFooter = 0;
     graphData.forEach(function (data) {
@@ -180,15 +181,14 @@ class Cases extends Component {
           countryConfirmedData.push(countryDataAtDate[selectedTypeTotalNewChange] | 0);
           previousNumber = countryDataAtDate[selectedTypeTotalNewChange] | 0;
           lastCountryData = countryDataAtDate;
+          totalNewCasesFooter += lastCountryData["NewCases"] | 0;
+          totalNewDeathsFooter += lastCountryData["NewDeaths"] | 0;
         } else {
           countryConfirmedData.push(previousNumber);
         }
       });
       totalCasesFooter += lastCountryData["Confirmed"] | 0;
       totalDeathsFooter += lastCountryData["Deaths"] | 0;
-      totalTestsFooter += lastCountryData["Tests"] | 0;
-      totalNewCasesFooter += lastCountryData["NewCases"] | 0;
-      totalNewDeathsFooter += lastCountryData["NewDeaths"] | 0;
       if(self.state.radioSelected === 1){
         countryConfirmedData = ma(countryConfirmedData, 3);
       } else if(self.state.radioSelected === 2){
@@ -223,7 +223,6 @@ class Cases extends Component {
       mainChartOpts : mainChartOpts,
       totalCasesFooter : totalCasesFooter,
       totalDeathsFooter : totalDeathsFooter,
-      totalTestsFooter : totalTestsFooter,
       totalNewCasesFooter : totalNewCasesFooter,
       totalNewDeathsFooter : totalNewDeathsFooter
     });
@@ -235,89 +234,87 @@ class Cases extends Component {
     return (
       <ThemeContextConsumer>
         {context => (
-          <div className="animated fadeIn">
-            <Row>
-              <Col>
-                <Card>
-                  <CardHeader>
-                    <FormGroup row>
-                      <Col md="4">
-                        <Label htmlFor="countries"><mark className="text-primary"><strong><small>*Countries</small></strong></mark></Label>
-                        <Input type="select" name="countries" id="countries" bsSize="sm" value={this.state.inputs.selectedCountry} onChange={this.onCountryChange.bind(this, context)}>
-                          <option value="">Please add a country</option>
-                          {
-                            context.countries.map((r , i) => <option key={i} value={r.Key}>{r.CountryName}</option>)
-                          }
-                        </Input>
-                      </Col>
-                      <Col md="4">
-                        <Label htmlFor="typeTotalNew"><mark className="text-primary"><strong><small>*Type</small></strong></mark></Label>
-                        <Input type="select" name="typeTotalNew" id="typeTotalNew" bsSize="sm" value={this.state.inputs.selectedTypeTotalNewChange} onChange={this.onTypeTotalNewChange.bind(this, context)}>
-                          <option value="NewCases">New Cases</option>
-                          <option value="Confirmed">Confirmed</option>
-                        </Input>
-                      </Col>
-                    </FormGroup>
-                    <Row>
-                    {
-                      this.state.inputs.selectedCountries.map((r , i) =>
-                        <Alert className="mb-0 mr-1 pr-5" key={r + i} color={i < 5 ? colorSet[i] : colorSet[4]} isOpen={true} toggle={this.onDismiss.bind(this, r, context)}>
-                          <div>{context.allDataObject[r].CountryName}</div>
-                        </Alert>
-                      )
-                    }
-                    </Row>
-                  </CardHeader>
-                  <CardBody>
-                    <Row>
-                      <Col sm="5">
-                        <CardTitle className="mb-0">Covid-19 Statistics</CardTitle>
-                      </Col>
-                      <Col sm="7" className="d-none d-sm-inline-block">
-                        <ButtonToolbar className="float-right" aria-label="Toolbar with button groups">
-                          <ButtonGroup className="mr-3" aria-label="First group">
-                            <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(0, context)} active={this.state.radioSelected !== 0}>Normal</Button>
-                            <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(1, context)} active={this.state.radioSelected !== 1}>MA</Button>
-                            <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(2, context)} active={this.state.radioSelected !== 2}>EMA</Button>
-                            <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(3, context)} active={this.state.radioSelected !== 3}>WMA</Button>
-                          </ButtonGroup>
-                        </ButtonToolbar>
-                      </Col>
-                    </Row>
-                    <div className="chart-wrapper" style={{ height: 300 + 'px', marginTop: 5 + 'px' }}>
-                       {
-                         <Line data={this.state.mainChart} options={this.state.mainChartOpts} height={300} />
-                       }
-                    </div>
-                  </CardBody>
-                  <CardFooter>
-                    <Row className="text-center">
-                      <Col sm={12} md className="mb-sm-2 mb-0">
-                        <div className="text-muted">Total Cases</div>
-                        <strong>{this.state.totalCasesFooter}</strong>
-                      </Col>
-                      <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
-                        <div className="text-muted">Total Deaths</div>
-                        <strong>{this.state.totalDeathsFooter}</strong>
-                      </Col>
-                      <Col sm={12} md className="mb-sm-2 mb-0">
-                        <div className="text-muted">Total Tests</div>
-                        <strong>{this.state.totalTestsFooter}</strong>
-                      </Col>
-                      <Col sm={12} md className="mb-sm-2 mb-0">
-                        <div className="text-muted">New Cases</div>
-                        <strong>{this.state.totalNewCasesFooter}</strong>
-                      </Col>
-                      <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
-                        <div className="text-muted">New Deaths</div>
-                        <strong>{this.state.totalNewDeathsFooter}</strong>
-                      </Col>
-                    </Row>
-                  </CardFooter>
-                </Card>
-              </Col>
-            </Row>
-          </div>
+          <Loader loaded={context.removeLoadingBar}>
+            <div className="animated fadeIn">
+              <Row>
+                <Col>
+                  <Card>
+                    <CardHeader>
+                      <FormGroup row>
+                        <Col md="4">
+                          <Label htmlFor="countries"><mark className="text-primary"><strong><small>*Countries</small></strong></mark></Label>
+                          <Input type="select" name="countries" id="countries" bsSize="sm" value={this.state.inputs.selectedCountry} onChange={this.onCountryChange.bind(this, context)}>
+                            <option value="">Please add a country</option>
+                            {
+                              context.countries.map((r , i) => <option key={i} value={r.Key}>{r.CountryName}</option>)
+                            }
+                          </Input>
+                        </Col>
+                        <Col md="4">
+                          <Label htmlFor="typeTotalNew"><mark className="text-primary"><strong><small>*Type</small></strong></mark></Label>
+                          <Input type="select" name="typeTotalNew" id="typeTotalNew" bsSize="sm" value={this.state.inputs.selectedTypeTotalNewChange} onChange={this.onTypeTotalNewChange.bind(this, context)}>
+                            <option value="NewCases">New Cases</option>
+                            <option value="Confirmed">Confirmed</option>
+                          </Input>
+                        </Col>
+                      </FormGroup>
+                      <Row>
+                      {
+                        this.state.inputs.selectedCountries.map((r , i) =>
+                          <Alert className="mb-0 mr-1 pr-5" key={r + i} color={i < 5 ? colorSet[i] : colorSet[4]} isOpen={true} toggle={this.onDismiss.bind(this, r, context)}>
+                            <div>{context.allDataObject[r].CountryName}</div>
+                          </Alert>
+                        )
+                      }
+                      </Row>
+                    </CardHeader>
+                    <CardBody>
+                      <Row>
+                        <Col sm="5">
+                          <CardTitle className="mb-0">Covid-19 Statistics</CardTitle>
+                        </Col>
+                        <Col sm="7" className="d-none d-sm-inline-block">
+                          <ButtonToolbar className="float-right" aria-label="Toolbar with button groups">
+                            <ButtonGroup className="mr-3" aria-label="First group">
+                              <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(0, context)} active={this.state.radioSelected !== 0}>Normal</Button>
+                              <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(1, context)} active={this.state.radioSelected !== 1}>MA</Button>
+                              <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(2, context)} active={this.state.radioSelected !== 2}>EMA</Button>
+                              <Button className="text-dark" color="outline-primary" onClick={() => this.onRadioBtnClick(3, context)} active={this.state.radioSelected !== 3}>WMA</Button>
+                            </ButtonGroup>
+                          </ButtonToolbar>
+                        </Col>
+                      </Row>
+                      <div className="chart-wrapper" style={{ height: 300 + 'px', marginTop: 5 + 'px' }}>
+                         {
+                           <Line data={this.state.mainChart} options={this.state.mainChartOpts} height={300} />
+                         }
+                      </div>
+                    </CardBody>
+                    <CardFooter>
+                      <Row className="text-center">
+                        <Col sm={12} md className="mb-sm-2 mb-0">
+                          <div className="text-muted">Total Cases</div>
+                          <strong>{this.state.totalCasesFooter}</strong>
+                        </Col>
+                        <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
+                          <div className="text-muted">Total Deaths</div>
+                          <strong>{this.state.totalDeathsFooter}</strong>
+                        </Col>
+                        <Col sm={12} md className="mb-sm-2 mb-0">
+                          <div className="text-muted">New Cases</div>
+                          <strong>{this.state.totalNewCasesFooter}</strong>
+                        </Col>
+                        <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
+                          <div className="text-muted">New Deaths</div>
+                          <strong>{this.state.totalNewDeathsFooter}</strong>
+                        </Col>
+                      </Row>
+                    </CardFooter>
+                  </Card>
+                </Col>
+              </Row>
+            </div>
+          </Loader>
         )}
       </ThemeContextConsumer>
     );

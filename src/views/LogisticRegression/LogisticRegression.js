@@ -69,8 +69,6 @@ class Cases extends Component {
               ticks: {
                 beginAtZero: true,
                 maxTicksLimit: 40,
-                stepSize: 1000,
-                max: 300000,
               },
             }],
         },
@@ -199,9 +197,7 @@ class Cases extends Component {
         xDataForLogistic.push(xIndex);
         xIndex++;
       });
-      let result = regression.polynomial(dataForLogistic, { order: 3 });
-      let gradient = result.equation[0];
-      let yIntercept = result.equation[1];
+      regression.polynomial(dataForLogistic, { order: 3 });
 
       if(self.state.radioSelected === 1){
         countryConfirmedData = ma(countryConfirmedData, 3);
@@ -278,9 +274,9 @@ class Cases extends Component {
 
           errors.push({error:error, epoch:i});
 
-          var accuracy = 1+Math.round(error*100)/100;
+          //var accuracy = 1+Math.round(error*100)/100;
 
-          var progresspercent = 100*i/500;
+          //var progresspercent = 100*i/500;
       }
   }
 

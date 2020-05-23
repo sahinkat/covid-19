@@ -63,7 +63,6 @@ class Deaths extends Component {
               ticks: {
                 beginAtZero: true,
                 maxTicksLimit: 40,
-                stepSize: 1000,
               },
             }],
         },
@@ -167,7 +166,6 @@ class Deaths extends Component {
     let maxValue = 0;
     let totalCasesFooter = 0;
     let totalDeathsFooter = 0;
-    let totalTestsFooter = 0;
     let totalNewCasesFooter = 0;
     let totalNewDeathsFooter = 0;
     graphData.forEach(function (data) {
@@ -180,15 +178,15 @@ class Deaths extends Component {
           countryConfirmedData.push(countryDataAtDate[selectedTypeTotalNewChange] | 0);
           previousNumber = countryDataAtDate[selectedTypeTotalNewChange] | 0;
           lastCountryData = countryDataAtDate;
+          totalNewCasesFooter += lastCountryData["NewCases"] | 0;
+          totalNewDeathsFooter += lastCountryData["NewDeaths"] | 0;
         } else {
           countryConfirmedData.push(previousNumber);
         }
       });
       totalCasesFooter += lastCountryData["Confirmed"] | 0;
       totalDeathsFooter += lastCountryData["Deaths"] | 0;
-      totalTestsFooter += lastCountryData["Tests"] | 0;
-      totalNewCasesFooter += lastCountryData["NewCases"] | 0;
-      totalNewDeathsFooter += lastCountryData["NewDeaths"] | 0;
+
       if(self.state.radioSelected === 1){
         countryConfirmedData = ma(countryConfirmedData, 3);
       } else if(self.state.radioSelected === 2){
@@ -223,7 +221,6 @@ class Deaths extends Component {
       mainChartOpts : mainChartOpts,
       totalCasesFooter : totalCasesFooter,
       totalDeathsFooter : totalDeathsFooter,
-      totalTestsFooter : totalTestsFooter,
       totalNewCasesFooter : totalNewCasesFooter,
       totalNewDeathsFooter : totalNewDeathsFooter
     });
@@ -299,10 +296,6 @@ class Deaths extends Component {
                       <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
                         <div className="text-muted">Total Deaths</div>
                         <strong>{this.state.totalDeathsFooter}</strong>
-                      </Col>
-                      <Col sm={12} md className="mb-sm-2 mb-0">
-                        <div className="text-muted">Total Tests</div>
-                        <strong>{this.state.totalTestsFooter}</strong>
                       </Col>
                       <Col sm={12} md className="mb-sm-2 mb-0">
                         <div className="text-muted">New Cases</div>
