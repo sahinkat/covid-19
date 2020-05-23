@@ -10,11 +10,14 @@ import {
   AppSidebarHeader,
   AppSidebarMinimizer,
   AppSidebarNav,
+  AppHeader,
 } from '@coreui/react';
 // sidebar nav config
 import navigation from '../../_nav';
 // routes config
 import routes from '../../routes';
+
+const DefaultHeader = React.lazy(() => import('./DefaultHeader'));
 
 class DefaultLayout extends Component {
 
@@ -23,6 +26,11 @@ class DefaultLayout extends Component {
   render() {
     return (
       <div className="app">
+        <AppHeader fixed>
+          <Suspense fallback={this.loading()}>
+            <DefaultHeader/>
+          </Suspense>
+        </AppHeader>
         <div className="app-body">
           <AppSidebar fixed display="lg">
             <AppSidebarHeader />

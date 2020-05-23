@@ -173,11 +173,11 @@ class Dashboard extends Component {
                 <Col md="6">
                   <Card>
                     <CardHeader>
-                      Continental Covid Cases Per One Million
+                      Countries With The Most New Cases
                     </CardHeader>
                     <CardBody>
                       <div className="chart-wrapper">
-                        <Polar data={this.state.polar} options={options}/>
+                        <Bar data={this.state.bar} options={options} />
                       </div>
                     </CardBody>
                   </Card>
@@ -185,11 +185,11 @@ class Dashboard extends Component {
                 <Col md="6">
                   <Card>
                     <CardHeader>
-                      Countries With The Most New Cases
+                      Continental Covid Cases Per One Million
                     </CardHeader>
                     <CardBody>
                       <div className="chart-wrapper">
-                        <Bar data={this.state.bar} options={options} />
+                        <Polar data={this.state.polar} options={options}/>
                       </div>
                     </CardBody>
                   </Card>
