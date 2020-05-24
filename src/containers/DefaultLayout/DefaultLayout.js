@@ -3,7 +3,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { Container } from 'reactstrap';
 
 import {
-  AppBreadcrumb,
+  AppFooter,
   AppSidebar,
   AppSidebarFooter,
   AppSidebarForm,
@@ -18,6 +18,7 @@ import navigation from '../../_nav';
 import routes from '../../routes';
 
 const DefaultHeader = React.lazy(() => import('./DefaultHeader'));
+const DefaultFooter = React.lazy(() => import('./DefaultFooter'));
 
 class DefaultLayout extends Component {
 
@@ -42,7 +43,6 @@ class DefaultLayout extends Component {
             <AppSidebarMinimizer />
           </AppSidebar>
           <main className="main">
-            <AppBreadcrumb appRoutes={routes}/>
             <Container fluid>
               <Suspense fallback={this.loading()}>
                 <Switch>
@@ -64,6 +64,11 @@ class DefaultLayout extends Component {
             </Container>
           </main>
         </div>
+        <AppFooter>
+          <Suspense fallback={this.loading()}>
+            <DefaultFooter />
+          </Suspense>
+        </AppFooter>
       </div>
     );
   }

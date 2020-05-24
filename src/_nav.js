@@ -26,7 +26,7 @@ export default {
       icon: 'icon-star',
     },
     {
-      name: 'LogisticRegression',
+      name: 'Prediction',
       url: '/logistic',
       icon: 'icon-star',
     }

@@ -1450,7 +1450,7 @@ const data_test =
    "Entity": "Bahrain",
    "Code": "BHR",
    "Date": "May 23, 2020",
-   "Total tests": 274711
+   "Total tests": 276552
  },
  {
    "Entity": "Bangladesh",
@@ -3061,6 +3061,12 @@ const data_test =
    "Total tests": 11665
  },
  {
+   "Entity": "Bolivia",
+   "Code": "BOL",
+   "Date": "May 23, 2020",
+   "Total tests": 12001
+ },
+ {
    "Entity": "Brazil",
    "Code": "BRA",
    "Date": "Apr 7, 2020",
@@ -3227,6 +3233,12 @@ const data_test =
    "Code": "BGR",
    "Date": "May 23, 2020",
    "Total tests": 73210
+ },
+ {
+   "Entity": "Bulgaria",
+   "Code": "BGR",
+   "Date": "May 24, 2020",
+   "Total tests": 74096
  },
  {
    "Entity": "Canada",
@@ -3613,6 +3625,12 @@ const data_test =
    "Total tests": 1401564
  },
  {
+   "Entity": "Canada",
+   "Code": "CAN",
+   "Date": "May 23, 2020",
+   "Total tests": 1431911
+ },
+ {
    "Entity": "Chile",
    "Code": "CHL",
    "Date": "Apr 1, 2020",
@@ -3923,6 +3941,12 @@ const data_test =
    "Code": "CHL",
    "Date": "May 22, 2020",
    "Total tests": 442093
+ },
+ {
+   "Entity": "Chile",
+   "Code": "CHL",
+   "Date": "May 23, 2020",
+   "Total tests": 457332
  },
  {
    "Entity": "Colombia",
@@ -4397,6 +4421,12 @@ const data_test =
    "Code": "COL",
    "Date": "May 22, 2020",
    "Total tests": 235948
+ },
+ {
+   "Entity": "Colombia",
+   "Code": "COL",
+   "Date": "May 23, 2020",
+   "Total tests": 243119
  },
  {
    "Entity": "Costa Rica",
@@ -6304,7 +6334,7 @@ const data_test =
    "Entity": "Czech Republic",
    "Code": "CZE",
    "Date": "May 20, 2020",
-   "Total tests": 379935
+   "Total tests": 379948
  },
  {
    "Entity": "Czech Republic",
@@ -6316,7 +6346,13 @@ const data_test =
    "Entity": "Czech Republic",
    "Code": "CZE",
    "Date": "May 22, 2020",
-   "Total tests": 394499
+   "Total tests": 394944
+ },
+ {
+   "Entity": "Czech Republic",
+   "Code": "CZE",
+   "Date": "May 23, 2020",
+   "Total tests": 399896
  },
  {
    "Entity": "Denmark",
@@ -7867,6 +7903,12 @@ const data_test =
    "Total tests": 75250
  },
  {
+   "Entity": "Estonia",
+   "Code": "EST",
+   "Date": "May 23, 2020",
+   "Total tests": 75780
+ },
+ {
    "Entity": "Ethiopia",
    "Code": "ETH",
    "Date": "Mar 17, 2020",
@@ -9379,6 +9421,12 @@ const data_test =
    "Total tests": 144078
  },
  {
+   "Entity": "Greece",
+   "Code": "GRC",
+   "Date": "May 23, 2020",
+   "Total tests": 152998
+ },
+ {
    "Entity": "Hong Kong",
    "Code": "HKG",
    "Date": "Jan 31, 2020",
@@ -9875,6 +9923,18 @@ const data_test =
    "Code": "HUN",
    "Date": "May 22, 2020",
    "Total tests": 155801
+ },
+ {
+   "Entity": "Hungary",
+   "Code": "HUN",
+   "Date": "May 23, 2020",
+   "Total tests": 159260
+ },
+ {
+   "Entity": "Hungary",
+   "Code": "HUN",
+   "Date": "May 24, 2020",
+   "Total tests": 162925
  },
  {
    "Entity": "Iceland",
@@ -12643,6 +12703,12 @@ const data_test =
    "Total tests": 3318778
  },
  {
+   "Entity": "Italy",
+   "Code": "ITA",
+   "Date": "May 23, 2020",
+   "Total tests": 3391188
+ },
+ {
    "Entity": "Italy, people tested",
    "Code": "",
    "Date": "Apr 19, 2020",
@@ -12845,6 +12911,12 @@ const data_test =
    "Code": "",
    "Date": "May 22, 2020",
    "Total tests": 2121847
+ },
+ {
+   "Entity": "Italy, people tested",
+   "Code": "",
+   "Date": "May 23, 2020",
+   "Total tests": 2164426
  },
  {
    "Entity": "Japan",
@@ -13618,43 +13690,49 @@ const data_test =
    "Entity": "Japan, tests performed",
    "Code": "",
    "Date": "May 14, 2020",
-   "Total tests": 389987
+   "Total tests": 390228
  },
  {
    "Entity": "Japan, tests performed",
    "Code": "",
    "Date": "May 15, 2020",
-   "Total tests": 397011
+   "Total tests": 398421
  },
  {
    "Entity": "Japan, tests performed",
    "Code": "",
    "Date": "May 16, 2020",
-   "Total tests": 403349
+   "Total tests": 405011
  },
  {
    "Entity": "Japan, tests performed",
    "Code": "",
    "Date": "May 17, 2020",
-   "Total tests": 406120
+   "Total tests": 407885
  },
  {
    "Entity": "Japan, tests performed",
    "Code": "",
    "Date": "May 18, 2020",
-   "Total tests": 412262
+   "Total tests": 414187
  },
  {
    "Entity": "Japan, tests performed",
    "Code": "",
    "Date": "May 19, 2020",
-   "Total tests": 419346
+   "Total tests": 421505
  },
  {
    "Entity": "Japan, tests performed",
    "Code": "",
    "Date": "May 20, 2020",
-   "Total tests": 425481
+   "Total tests": 427862
+ },
+ {
+   "Entity": "Japan, tests performed",
+   "Code": "",
+   "Date": "May 21, 2020",
+   "Total tests": 432684
  },
  {
    "Entity": "Kazakhstan",
@@ -14911,6 +14989,12 @@ const data_test =
    "Total tests": 97846
  },
  {
+   "Entity": "Latvia",
+   "Code": "LVA",
+   "Date": "May 24, 2020",
+   "Total tests": 99049
+ },
+ {
    "Entity": "Lithuania",
    "Code": "LTU",
    "Date": "Feb 28, 2020",
@@ -15551,6 +15635,12 @@ const data_test =
    "Code": "LUX",
    "Date": "May 22, 2020",
    "Total tests": 65724
+ },
+ {
+   "Entity": "Luxembourg",
+   "Code": "LUX",
+   "Date": "May 23, 2020",
+   "Total tests": 66653
  },
  {
    "Entity": "Malaysia",
@@ -16291,6 +16381,12 @@ const data_test =
    "Total tests": 16846
  },
  {
+   "Entity": "Maldives",
+   "Code": "MDV",
+   "Date": "May 22, 2020",
+   "Total tests": 17174
+ },
+ {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Jan 1, 2020",
@@ -16462,421 +16558,421 @@ const data_test =
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Jan 29, 2020",
-   "Total tests": 945
+   "Total tests": 946
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Jan 30, 2020",
-   "Total tests": 984
+   "Total tests": 985
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Jan 31, 2020",
-   "Total tests": 1016
+   "Total tests": 1017
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 1, 2020",
-   "Total tests": 1024
+   "Total tests": 1025
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 2, 2020",
-   "Total tests": 1036
+   "Total tests": 1037
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 3, 2020",
-   "Total tests": 1049
+   "Total tests": 1050
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 4, 2020",
-   "Total tests": 1100
+   "Total tests": 1101
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 5, 2020",
-   "Total tests": 1145
+   "Total tests": 1146
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 6, 2020",
-   "Total tests": 1189
+   "Total tests": 1190
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 7, 2020",
-   "Total tests": 1218
+   "Total tests": 1219
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 8, 2020",
-   "Total tests": 1226
+   "Total tests": 1227
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 9, 2020",
-   "Total tests": 1242
+   "Total tests": 1243
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 10, 2020",
-   "Total tests": 1313
+   "Total tests": 1314
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 11, 2020",
-   "Total tests": 1362
+   "Total tests": 1363
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 12, 2020",
-   "Total tests": 1402
+   "Total tests": 1403
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 13, 2020",
-   "Total tests": 1437
+   "Total tests": 1438
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 14, 2020",
-   "Total tests": 1469
+   "Total tests": 1470
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 15, 2020",
-   "Total tests": 1478
+   "Total tests": 1479
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 16, 2020",
-   "Total tests": 1495
+   "Total tests": 1496
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 17, 2020",
-   "Total tests": 1523
+   "Total tests": 1524
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 18, 2020",
-   "Total tests": 1553
+   "Total tests": 1554
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 19, 2020",
-   "Total tests": 1583
+   "Total tests": 1584
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 20, 2020",
-   "Total tests": 1606
+   "Total tests": 1607
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 21, 2020",
-   "Total tests": 1632
+   "Total tests": 1633
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 22, 2020",
-   "Total tests": 1644
+   "Total tests": 1645
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 23, 2020",
-   "Total tests": 1653
+   "Total tests": 1654
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 24, 2020",
-   "Total tests": 1685
+   "Total tests": 1686
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 25, 2020",
-   "Total tests": 1717
+   "Total tests": 1718
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 26, 2020",
-   "Total tests": 1755
+   "Total tests": 1756
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 27, 2020",
-   "Total tests": 1799
+   "Total tests": 1800
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 28, 2020",
-   "Total tests": 1864
+   "Total tests": 1865
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Feb 29, 2020",
-   "Total tests": 1889
+   "Total tests": 1890
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 1, 2020",
-   "Total tests": 1916
+   "Total tests": 1917
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 2, 2020",
-   "Total tests": 1999
+   "Total tests": 2000
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 3, 2020",
-   "Total tests": 2073
+   "Total tests": 2074
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 4, 2020",
-   "Total tests": 2142
+   "Total tests": 2143
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 5, 2020",
-   "Total tests": 2207
+   "Total tests": 2208
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 6, 2020",
-   "Total tests": 2260
+   "Total tests": 2261
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 7, 2020",
-   "Total tests": 2285
+   "Total tests": 2286
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 8, 2020",
-   "Total tests": 2320
+   "Total tests": 2321
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 9, 2020",
-   "Total tests": 2399
+   "Total tests": 2400
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 10, 2020",
-   "Total tests": 2505
+   "Total tests": 2506
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 11, 2020",
-   "Total tests": 2640
+   "Total tests": 2641
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 12, 2020",
-   "Total tests": 2845
+   "Total tests": 2846
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 13, 2020",
-   "Total tests": 3127
+   "Total tests": 3128
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 14, 2020",
-   "Total tests": 3290
+   "Total tests": 3291
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 15, 2020",
-   "Total tests": 3461
+   "Total tests": 3462
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 16, 2020",
-   "Total tests": 3726
+   "Total tests": 3727
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 17, 2020",
-   "Total tests": 4181
+   "Total tests": 4182
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 18, 2020",
-   "Total tests": 4683
+   "Total tests": 4684
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 19, 2020",
-   "Total tests": 5275
+   "Total tests": 5276
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 20, 2020",
-   "Total tests": 5848
+   "Total tests": 5849
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 21, 2020",
-   "Total tests": 6245
+   "Total tests": 6246
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 22, 2020",
-   "Total tests": 6559
+   "Total tests": 6560
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 23, 2020",
-   "Total tests": 7388
+   "Total tests": 7389
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 24, 2020",
-   "Total tests": 8520
+   "Total tests": 8521
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 25, 2020",
-   "Total tests": 9764
+   "Total tests": 9763
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 26, 2020",
-   "Total tests": 10983
+   "Total tests": 10981
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 27, 2020",
-   "Total tests": 12449
+   "Total tests": 12446
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 28, 2020",
-   "Total tests": 13216
+   "Total tests": 13213
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 29, 2020",
-   "Total tests": 13959
+   "Total tests": 13956
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 30, 2020",
-   "Total tests": 15629
+   "Total tests": 15626
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Mar 31, 2020",
-   "Total tests": 17125
+   "Total tests": 17122
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 1, 2020",
-   "Total tests": 18699
+   "Total tests": 18695
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 2, 2020",
-   "Total tests": 20384
+   "Total tests": 20380
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 3, 2020",
-   "Total tests": 22113
+   "Total tests": 22109
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 4, 2020",
-   "Total tests": 23177
+   "Total tests": 23173
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 5, 2020",
-   "Total tests": 23987
+   "Total tests": 23983
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 6, 2020",
-   "Total tests": 25959
+   "Total tests": 25955
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 7, 2020",
-   "Total tests": 27935
+   "Total tests": 27934
  },
  {
    "Entity": "Mexico",
@@ -16888,13 +16984,13 @@ const data_test =
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 9, 2020",
-   "Total tests": 31727
+   "Total tests": 31728
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 10, 2020",
-   "Total tests": 33636
+   "Total tests": 33637
  },
  {
    "Entity": "Mexico",
@@ -16906,37 +17002,37 @@ const data_test =
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 12, 2020",
-   "Total tests": 36190
+   "Total tests": 36189
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 13, 2020",
-   "Total tests": 38948
+   "Total tests": 38949
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 14, 2020",
-   "Total tests": 41801
+   "Total tests": 41803
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 15, 2020",
-   "Total tests": 44544
+   "Total tests": 44546
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 16, 2020",
-   "Total tests": 47184
+   "Total tests": 47185
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 17, 2020",
-   "Total tests": 50160
+   "Total tests": 50158
  },
  {
    "Entity": "Mexico",
@@ -16948,199 +17044,205 @@ const data_test =
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 19, 2020",
-   "Total tests": 53192
+   "Total tests": 53191
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 20, 2020",
-   "Total tests": 56691
+   "Total tests": 56694
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 21, 2020",
-   "Total tests": 59934
+   "Total tests": 59935
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 22, 2020",
-   "Total tests": 63054
+   "Total tests": 63056
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 23, 2020",
-   "Total tests": 66469
+   "Total tests": 66466
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 24, 2020",
-   "Total tests": 70317
+   "Total tests": 70311
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 25, 2020",
-   "Total tests": 72436
+   "Total tests": 72431
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 26, 2020",
-   "Total tests": 74273
+   "Total tests": 74272
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 27, 2020",
-   "Total tests": 78379
+   "Total tests": 78381
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 28, 2020",
-   "Total tests": 82619
+   "Total tests": 82624
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 29, 2020",
-   "Total tests": 87181
+   "Total tests": 87190
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "Apr 30, 2020",
-   "Total tests": 92093
+   "Total tests": 92107
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 1, 2020",
-   "Total tests": 94988
+   "Total tests": 95006
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 2, 2020",
-   "Total tests": 97654
+   "Total tests": 97680
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 3, 2020",
-   "Total tests": 100249
+   "Total tests": 100279
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 4, 2020",
-   "Total tests": 105865
+   "Total tests": 105906
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 5, 2020",
-   "Total tests": 110552
+   "Total tests": 110610
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 6, 2020",
-   "Total tests": 115794
+   "Total tests": 115897
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 7, 2020",
-   "Total tests": 121048
+   "Total tests": 121231
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 8, 2020",
-   "Total tests": 126603
+   "Total tests": 126837
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 9, 2020",
-   "Total tests": 129598
+   "Total tests": 129892
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 10, 2020",
-   "Total tests": 131981
+   "Total tests": 132291
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 11, 2020",
-   "Total tests": 137977
+   "Total tests": 138425
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 12, 2020",
-   "Total tests": 143550
+   "Total tests": 144425
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 13, 2020",
-   "Total tests": 148989
+   "Total tests": 150160
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 14, 2020",
-   "Total tests": 154568
+   "Total tests": 156088
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 15, 2020",
-   "Total tests": 160198
+   "Total tests": 162144
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 16, 2020",
-   "Total tests": 163041
+   "Total tests": 165241
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 17, 2020",
-   "Total tests": 164912
+   "Total tests": 167288
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 18, 2020",
-   "Total tests": 170144
+   "Total tests": 173148
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 19, 2020",
-   "Total tests": 173961
+   "Total tests": 177839
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 20, 2020",
-   "Total tests": 175965
+   "Total tests": 181808
  },
  {
    "Entity": "Mexico",
    "Code": "MEX",
    "Date": "May 21, 2020",
-   "Total tests": 176263
+   "Total tests": 183754
+ },
+ {
+   "Entity": "Mexico",
+   "Code": "MEX",
+   "Date": "May 22, 2020",
+   "Total tests": 183992
  },
  {
    "Entity": "Morocco",
@@ -18487,6 +18589,12 @@ const data_test =
    "Total tests": 42517
  },
  {
+   "Entity": "Nepal",
+   "Code": "NPL",
+   "Date": "May 23, 2020",
+   "Total tests": 45959
+ },
+ {
    "Entity": "Netherlands",
    "Code": "NLD",
    "Date": "Mar 15, 2020",
@@ -19013,6 +19121,12 @@ const data_test =
    "Code": "NZL",
    "Date": "May 22, 2020",
    "Total tests": 255850
+ },
+ {
+   "Entity": "New Zealand",
+   "Code": "NZL",
+   "Date": "May 23, 2020",
+   "Total tests": 259152
  },
  {
    "Entity": "Nigeria",
@@ -19943,6 +20057,12 @@ const data_test =
    "Code": "PAK",
    "Date": "May 23, 2020",
    "Total tests": 460692
+ },
+ {
+   "Entity": "Pakistan",
+   "Code": "PAK",
+   "Date": "May 24, 2020",
+   "Total tests": 473607
  },
  {
    "Entity": "Panama",
@@ -21256,7 +21376,7 @@ const data_test =
    "Entity": "Peru",
    "Code": "PER",
    "Date": "May 23, 2020",
-   "Total tests": 115481
+   "Total tests": 122749
  },
  {
    "Entity": "Philippines",
@@ -21401,6 +21521,12 @@ const data_test =
    "Code": "PHL",
    "Date": "May 15, 2020",
    "Total tests": 188024
+ },
+ {
+   "Entity": "Philippines",
+   "Code": "PHL",
+   "Date": "May 22, 2020",
+   "Total tests": 265061
  },
  {
    "Entity": "Poland",
@@ -22753,6 +22879,12 @@ const data_test =
    "Total tests": 180642
  },
  {
+   "Entity": "Qatar",
+   "Code": "QAT",
+   "Date": "May 23, 2020",
+   "Total tests": 184794
+ },
+ {
    "Entity": "Romania",
    "Code": "ROU",
    "Date": "Mar 12, 2020",
@@ -23641,6 +23773,12 @@ const data_test =
    "Total tests": 8402747
  },
  {
+   "Entity": "Russia",
+   "Code": "RUS",
+   "Date": "May 24, 2020",
+   "Total tests": 8685305
+ },
+ {
    "Entity": "Rwanda",
    "Code": "RWA",
    "Date": "Apr 6, 2020",
@@ -24017,6 +24155,12 @@ const data_test =
    "Code": "SAU",
    "Date": "May 22, 2020",
    "Total tests": 667057
+ },
+ {
+   "Entity": "Saudi Arabia",
+   "Code": "SAU",
+   "Date": "May 23, 2020",
+   "Total tests": 684615
  },
  {
    "Entity": "Senegal",
@@ -24503,6 +24647,12 @@ const data_test =
    "Code": "SEN",
    "Date": "May 22, 2020",
    "Total tests": 33892
+ },
+ {
+   "Entity": "Senegal",
+   "Code": "SEN",
+   "Date": "May 23, 2020",
+   "Total tests": 34826
  },
  {
    "Entity": "Serbia",
@@ -25021,6 +25171,12 @@ const data_test =
    "Total tests": 209797
  },
  {
+   "Entity": "Serbia",
+   "Code": "SRB",
+   "Date": "May 23, 2020",
+   "Total tests": 214212
+ },
+ {
    "Entity": "Singapore",
    "Code": "SGP",
    "Date": "Apr 7, 2020",
@@ -25445,6 +25601,12 @@ const data_test =
    "Code": "SVK",
    "Date": "May 23, 2020",
    "Total tests": 156765
+ },
+ {
+   "Entity": "Slovakia",
+   "Code": "SVK",
+   "Date": "May 24, 2020",
+   "Total tests": 158414
  },
  {
    "Entity": "Slovenia",
@@ -25877,6 +26039,12 @@ const data_test =
    "Code": "SVN",
    "Date": "May 22, 2020",
    "Total tests": 74419
+ },
+ {
+   "Entity": "Slovenia",
+   "Code": "SVN",
+   "Date": "May 23, 2020",
+   "Total tests": 74760
  },
  {
    "Entity": "South Africa",
@@ -26375,6 +26543,12 @@ const data_test =
    "Code": "ZAF",
    "Date": "May 22, 2020",
    "Total tests": 543032
+ },
+ {
+   "Entity": "South Africa",
+   "Code": "ZAF",
+   "Date": "May 23, 2020",
+   "Total tests": 564370
  },
  {
    "Entity": "South Korea",
@@ -28345,6 +28519,12 @@ const data_test =
    "Total tests": 70526
  },
  {
+   "Entity": "Taiwan",
+   "Code": "TWN",
+   "Date": "May 23, 2020",
+   "Total tests": 70697
+ },
+ {
    "Entity": "Thailand",
    "Code": "THA",
    "Date": "Apr 10, 2020",
@@ -28810,7 +28990,7 @@ const data_test =
    "Entity": "Thailand, people tested",
    "Code": "",
    "Date": "May 23, 2020",
-   "Total tests": 147310
+   "Total tests": 150455
  },
  {
    "Entity": "Tunisia",
@@ -29245,6 +29425,12 @@ const data_test =
    "Total tests": 46628
  },
  {
+   "Entity": "Tunisia",
+   "Code": "TUN",
+   "Date": "May 22, 2020",
+   "Total tests": 47649
+ },
+ {
    "Entity": "Turkey",
    "Code": "TUR",
    "Date": "Mar 18, 2020",
@@ -29629,6 +29815,12 @@ const data_test =
    "Total tests": 1767495
  },
  {
+   "Entity": "Turkey",
+   "Code": "TUR",
+   "Date": "May 23, 2020",
+   "Total tests": 1807673
+ },
+ {
    "Entity": "Uganda",
    "Code": "UGA",
    "Date": "Apr 6, 2020",
@@ -29893,6 +30085,12 @@ const data_test =
    "Total tests": 80552
  },
  {
+   "Entity": "Uganda",
+   "Code": "UGA",
+   "Date": "May 22, 2020",
+   "Total tests": 82658
+ },
+ {
    "Entity": "Ukraine",
    "Code": "UKR",
    "Date": "Apr 9, 2020",
@@ -30095,6 +30293,12 @@ const data_test =
    "Code": "UKR",
    "Date": "May 23, 2020",
    "Total tests": 277712
+ },
+ {
+   "Entity": "Ukraine",
+   "Code": "UKR",
+   "Date": "May 24, 2020",
+   "Total tests": 285626
  },
  {
    "Entity": "United Kingdom",
@@ -31075,6 +31279,12 @@ const data_test =
    "Total tests": 3231921
  },
  {
+   "Entity": "United Kingdom, tests performed",
+   "Code": "",
+   "Date": "May 23, 2020",
+   "Total tests": 3348507
+ },
+ {
    "Entity": "United States",
    "Code": "USA",
    "Date": "Mar 7, 2020",
@@ -31535,6 +31745,12 @@ const data_test =
    "Code": "USA",
    "Date": "May 22, 2020",
    "Total tests": 13419058
+ },
+ {
+   "Entity": "United States",
+   "Code": "USA",
+   "Date": "May 23, 2020",
+   "Total tests": 13784786
  },
  {
    "Entity": "United States, tests performed",

@@ -3,8 +3,8 @@ import { Nav } from 'reactstrap';
 import PropTypes from 'prop-types';
 
 import { AppNavbarBrand, AppSidebarToggler } from '@coreui/react';
-import logo from '../../assets/img/brand/covidbig.jpeg'
-import sygnet from '../../assets/img/brand/covidbig.jpeg'
+import logo from '../../assets/img/brand/baubig.png'
+import sygnet from '../../assets/img/brand/baubig.png'
 
 const propTypes = {
   children: PropTypes.node,

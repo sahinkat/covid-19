@@ -77,6 +77,7 @@ class ThemeContextProvider extends Component {
       }
     });
 
+    countries = _.orderBy(countries, ['CountryName'],['asc']);
     self.getCases(allDataObject, countries);
     //this.getMobilityData();
   };

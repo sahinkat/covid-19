@@ -15,8 +15,8 @@ class DefaultFooter extends Component {
 
     return (
       <React.Fragment>
-        <span><a href="https://coreui.io">CoreUI</a> &copy; 2018 creativeLabs.</span>
-        <span className="ml-auto">Powered by <a href="https://coreui.io/react">CoreUI for React</a></span>
+        <span><a href="https://bau.edu.tr" target="_blank" rel="noopener noreferrer">Bahçeşehir University</a></span>
+        <span className="ml-auto">Powered by <a href="https://bau.edu.tr/kadro/iktisadi_idari" target="_blank" rel="noopener noreferrer">Doç. Dr. Çağlar YURTSEVEN</a>&nbsp;&&nbsp;<a href="https://www.linkedin.com/in/sahin-katlan-b376111b" target="_blank" rel="noopener noreferrer">Şahin KATLAN</a></span>
       </React.Fragment>
     );
   }
