@@ -67,24 +67,28 @@ class ThemeContextProvider extends Component {
     let countries = [];
     let metadataAll = data_metadata();
     metadataAll.forEach(country => {
-      allDataObject[country["Key"]] = country;
-      if(country["Key"].length < 3) {
-        countries.push({
-          "Key":country["Key"],
-          "CountryCode":country["CountryCode"],
-          "CountryName":country["CountryName"]
-        });
-      }
+      let newCountryObject = {
+        "Key":country.countryInfo.iso2,
+        "Key3":country.countryInfo.iso3,
+        "CountryCode":country.countryInfo.iso2,
+        "CountryName":country.country
+      };
+      allDataObject[country.countryInfo.iso2] = newCountryObject;
+      countries.push(newCountryObject);
     });
 
     countries = _.orderBy(countries, ['CountryName'],['asc']);
-    self.getCases(allDataObject, countries);
+    self.setState({
+      allDataObject : allDataObject,
+      countries     : countries,
+      removeLoadingBar : true
+    });
     //this.getMobilityData();
   };
 
-  getCases(allDataObject, countries) {
-    let self = this;
 
+
+/*
     axios.get('https://open-covid-19.github.io/data/data_minimal.json')
       .then(function ({ data }) {
         let data_minimal = data;
@@ -118,8 +122,8 @@ class ThemeContextProvider extends Component {
       .catch(function (error) {
         // handle error
         console.log(error);
-      });
-  }
+      });*/
+
 
   getMobilityData() {
     let self = this;
@@ -146,7 +150,7 @@ class ThemeContextProvider extends Component {
         {
           allDataObject : this.state.allDataObject,
           countries : this.state.countries,
-          refreshCovidData : this.refreshCovidData,
+          getCases : this.getCases,
           removeLoadingBar : this.state.removeLoadingBar
         }
       }>

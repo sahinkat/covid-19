@@ -22,6 +22,7 @@ import {
   ma, ema, wma
 } from 'moving-averages'
 import { ThemeContextConsumer } from "../../ThemeContextProvider";
+import AllDataUtils from '../../utils/AllDataUtils';
 
 var _ = require('lodash');
 var moment = require('moment');
@@ -62,7 +63,7 @@ class DeathsPerCase extends Component {
             {
               ticks: {
                 beginAtZero: true,
-                maxTicksLimit: 40,
+                maxTicksLimit: 40
               },
             }],
         },
@@ -91,15 +92,18 @@ class DeathsPerCase extends Component {
   loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
 
   onCountryChange(context, selectedCountry) {
-    if(selectedCountry.target.value !== ''){
+    let self = this;
+    selectedCountry = selectedCountry.target.value;
+    if(selectedCountry !== ''){
       let inputs = this.state.inputs;
-      inputs.selectedCountries.push(selectedCountry.target.value);
+      inputs.selectedCountries.push(selectedCountry);
       this.setState({
         inputs : inputs,
       });
     }
-
-    this.drawCovidGraph(context);
+    AllDataUtils.getCases(context, selectedCountry, function(newContext){
+      self.drawCovidGraph(newContext);
+    });
   }
 
   onTypeTotalNewChange(context, selectedTypeTotalNewChange) {
@@ -176,12 +180,11 @@ class DeathsPerCase extends Component {
         let countryDataAtDate = _.find(data.cases, ['Date', moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD')]);
         if(countryDataAtDate !== undefined){
           let deaths = (countryDataAtDate[selectedTypeTotalNewChange] | 0);
-          countryConfirmedData.push(
-            selectedTypeTotalNewChange === "NewDeaths" ?
-            (deaths / (countryDataAtDate.NewCases | 0) ? deaths / (countryDataAtDate.NewCases | 0) : 0) :
-            (deaths / (countryDataAtDate.Confirmed | 0) ? deaths / (countryDataAtDate.Confirmed | 0) : 0)
-          );
-          previousNumber = countryDataAtDate[selectedTypeTotalNewChange] | 0;
+          let calcData = selectedTypeTotalNewChange === "NewDeaths" ?
+          (deaths / (countryDataAtDate.NewCases | 0) ? deaths / (countryDataAtDate.NewCases | 0) : 0) :
+          (deaths / (countryDataAtDate.Confirmed | 0) ? deaths / (countryDataAtDate.Confirmed | 0) : 0);
+          countryConfirmedData.push(calcData);
+          previousNumber = calcData;
           lastCountryData = countryDataAtDate;
           totalNewCasesFooter += lastCountryData["NewCases"] | 0;
           totalNewDeathsFooter += lastCountryData["NewDeaths"] | 0;

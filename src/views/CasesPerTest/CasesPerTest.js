@@ -24,6 +24,7 @@ import {
 } from 'moving-averages'
 
 import { ThemeContextConsumer } from "../../ThemeContextProvider";
+import AllDataUtils from '../../utils/AllDataUtils';
 
 const moment = require('moment');
 const _ = require('lodash');
@@ -106,34 +107,37 @@ class CasesPerTest extends Component {
   }
 
   onCountryChange(context, selectedCountry) {
+    let self = this;
     selectedCountry = selectedCountry.target.value;
     if(selectedCountry !== ''){
       let testDataAll = data_test();
       let inputs = this.state.inputs;
       inputs.selectedCountries.push(selectedCountry);
-
-      let countryTestData = _.filter(testDataAll, {"Code":getCountryISO3(selectedCountry)});
-      let concattedCaseData = context.allDataObject[selectedCountry].cases;
-      let newConcattedCaseData = [];
-      if(countryTestData !== undefined && countryTestData.length > 0){
-        concattedCaseData.forEach(function(caseData) {
-          if(caseData !== undefined){
-            let countryTestDataAtDate = _.find(countryTestData, function(e) {
-              return moment(caseData["Date"], 'YYYY-MM-DD').isSame(moment(e["Date"], 'll'), 'day');
-            });
-            if(countryTestDataAtDate !== undefined && countryTestDataAtDate["Total tests"] > 0){
-              caseData["Tests"] = countryTestDataAtDate["Total tests"];
-            }
-            newConcattedCaseData.push(caseData);
-          }
-        });
-      }
-      context.allDataObject[selectedCountry].cases = newConcattedCaseData;
       this.setState({
         inputs : inputs,
       });
+
+      AllDataUtils.getCases(context, selectedCountry, function(newContext){
+        let countryTestData = _.filter(testDataAll, {"Code":getCountryISO3(selectedCountry)});
+        let concattedCaseData = newContext.allDataObject[selectedCountry].cases;
+        let newConcattedCaseData = [];
+        if(countryTestData !== undefined && countryTestData.length > 0){
+          concattedCaseData.forEach(function(caseData) {
+            if(caseData !== undefined){
+              let countryTestDataAtDate = _.find(countryTestData, function(e) {
+                return moment(caseData["Date"], 'YYYY-MM-DD').isSame(moment(e["Date"], 'll'), 'day');
+              });
+              if(countryTestDataAtDate !== undefined && countryTestDataAtDate["Total tests"] > 0){
+                caseData["Tests"] = countryTestDataAtDate["Total tests"];
+              }
+              newConcattedCaseData.push(caseData);
+            }
+          });
+        }
+        newContext.allDataObject[selectedCountry].cases = newConcattedCaseData;
+        self.drawCovidGraph(newContext);
+      });
     }
-    this.drawCovidGraph(context);
   }
 
   onDismiss(removedCountry, context) {

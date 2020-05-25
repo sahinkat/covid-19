@@ -22,6 +22,7 @@ import {
   ma, ema, wma
 } from 'moving-averages'
 import { ThemeContextConsumer } from "../../ThemeContextProvider";
+import AllDataUtils from '../../utils/AllDataUtils';
 
 var _ = require('lodash');
 var moment = require('moment');
@@ -92,6 +93,7 @@ class Cases extends Component {
   loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
 
   onCountryChange(context, selectedCountry) {
+    let self = this;
     selectedCountry = selectedCountry.target.value;
     if(selectedCountry !== ''){
       let inputs = this.state.inputs;
@@ -101,8 +103,9 @@ class Cases extends Component {
         inputs : inputs,
       });
     }
-
-    this.drawCovidGraph(context);
+    AllDataUtils.getCases(context, selectedCountry, function(newContext){
+      self.drawCovidGraph(newContext);
+    });
   }
 
   onTypeTotalNewChange(context, selectedTypeTotalNewChange) {

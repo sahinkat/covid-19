@@ -25,10 +25,10 @@ export default {
       url: '/deathspercase',
       icon: 'icon-star',
     },
-    {
+    /*{
       name: 'Prediction',
       url: '/logistic',
       icon: 'icon-star',
-    }
+    }*/
   ],
 };
